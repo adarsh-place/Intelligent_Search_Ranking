@@ -1,0 +1,129 @@
+[
+  {
+    "id": "page_01",
+    "title": "Introduction to Web Search Engines and Information Retrieval",
+    "category": "Web Architecture",
+    "content": "Modern search engines crawl the vast World Wide Web to discover, index, and rank billions of documents. Early search systems relied purely on keyword matching and term frequency, but rapid web growth led to search result pollution and spam. Combining textual relevance with structural graph analysis transformed search retrieval into a rigorous mathematical science.",
+    "outgoing_links": ["page_02", "page_03", "page_11", "page_13"]
+  },
+  {
+    "id": "page_02",
+    "title": "Graph Theory Foundations: Directed Graphs and Adjacency Matrices",
+    "category": "Graph Theory",
+    "content": "A web graph is formally represented as a directed graph G = (V, E) where vertices V represent webpages and directed edges E represent hyperlinks between pages. The adjacency matrix A of size N x N encodes these link connections. Graph properties such as in-degree, out-degree, strongly connected components, and path lengths determine structural connectivity across the web.",
+    "outgoing_links": ["page_03", "page_04", "page_06"]
+  },
+  {
+    "id": "page_03",
+    "title": "The Anatomy of PageRank: Eigenvectors and Stationary Distributions",
+    "category": "PageRank",
+    "content": "PageRank estimates webpage authority by modeling navigation as a Markov chain. Each webpage distributes its structural importance evenly across its outgoing links. By applying the Perron-Frobenius theorem to the modified stochastic Google matrix, power iteration converges to the dominant eigenvector corresponding to eigenvalue lambda = 1. High PageRank indicates deep structural authority from incoming links.",
+    "outgoing_links": ["page_02", "page_04", "page_07", "page_09"]
+  },
+  {
+    "id": "page_04",
+    "title": "Linear Algebra in Search: Matrix Transformations and Power Iteration",
+    "category": "Graph Theory",
+    "content": "Computing the PageRank vector for millions of nodes requires iterative numerical linear algebra. The power iteration method repeatedly multiplies a probability distribution vector by the transition probability matrix until the L1 norm difference falls below a tolerance threshold epsilon. Eigenvalue decomposition and spectral radius govern the rapid geometric rate of convergence.",
+    "outgoing_links": ["page_03", "page_05"]
+  },
+  {
+    "id": "page_05",
+    "title": "Spectral Graph Theory: Laplacian Matrices and Graph Partitioning",
+    "category": "Graph Theory",
+    "content": "Spectral graph theory analyzes the eigenvalues and eigenvectors of graph matrices such as the adjacency matrix and normalized graph Laplacian. These algebraic properties reveal graph expansion, bottleneck cuts, and cluster structures. In web search, spectral clustering helps partition web graphs into topical communities and identify dense hyperlink networks.",
+    "outgoing_links": ["page_02", "page_04"]
+  },
+  {
+    "id": "page_06",
+    "title": "Structural Traps in Web Graphs: Spider Traps and Dead Ends",
+    "category": "Graph Theory",
+    "content": "Web graphs often contain structural anomalies. Dead ends, also known as dangling nodes, are webpages with out-degree zero that cause probability mass to leak away during iterative updates. Spider traps are closed loops of pages that link only to each other, absorbing all random walk probability. Teleportation and damping factors solve both issues.",
+    "outgoing_links": ["page_03", "page_07"]
+  },
+  {
+    "id": "page_07",
+    "title": "Markov Chains and the Random Surfer Model",
+    "category": "Probability",
+    "content": "The random surfer model treats web browsing as a discrete-time Markov chain. At any step, the surfer clicks an outgoing link with probability d (the damping factor, typically 0.85) or gets bored and teleports to a completely random webpage with probability 1 - d. This guarantees an irreducible and aperiodic Markov chain with a unique stationary probability distribution.",
+    "outgoing_links": ["page_03", "page_08", "page_09", "page_10"]
+  },
+  {
+    "id": "page_08",
+    "title": "Glossary of Mathematical Foundations of Computer Science Terms",
+    "category": "Web Architecture",
+    "content": "A reference glossary covering fundamental MFCS definitions: directed acyclic graphs, stochastic matrices, stationary distributions, ergodic Markov chains, power iteration, inverse document frequency, and vector space similarity. Useful for students studying search engine mathematics and probability.",
+    "outgoing_links": []
+  },
+  {
+    "id": "page_09",
+    "title": "Monte Carlo Random Walk Simulation and Empirical Convergence",
+    "category": "Probability",
+    "content": "Instead of solving matrix equations directly, random walks simulate actual user trajectories across hyperlinks. By tracking visit frequencies across thousands of random walk steps with random teleportation, the empirical visit proportion converges to the theoretical PageRank stationary distribution according to the Law of Large Numbers and the Ergodic Theorem.",
+    "outgoing_links": ["page_03", "page_07", "page_10"]
+  },
+  {
+    "id": "page_10",
+    "title": "Damping Factor Sensitivity Analysis in Probabilistic Ranking",
+    "category": "Probability",
+    "content": "The choice of damping factor d balances structural hyperlink topology against uniform teleportation. When d is close to 1, PageRank strictly emphasizes graph structure but becomes vulnerable to spider traps and slow convergence. When d is low, rankings flatten toward uniform probability. A damping factor around 0.85 achieves optimal balance in practice.",
+    "outgoing_links": ["page_03", "page_07"]
+  },
+  {
+    "id": "page_11",
+    "title": "Text Relevance and Inverted Indexing for Search Retrieval",
+    "category": "Information Retrieval",
+    "content": "Before evaluating hyperlink importance, search engines must determine which webpages contain query keywords. Inverted indices map individual terms to postings lists containing document IDs and term frequencies. Fast query processing tokenizes search strings, removes common stop words, and fetches relevant candidate documents in milliseconds.",
+    "outgoing_links": ["page_01", "page_12", "page_13"]
+  },
+  {
+    "id": "page_12",
+    "title": "The Vector Space Model and TF-IDF Cosine Similarity",
+    "category": "Information Retrieval",
+    "content": "In the vector space model, both documents and search queries are represented as high-dimensional term vectors. Term Frequency (TF) weights term importance within a page, while Inverse Document Frequency (IDF) penalizes pervasive words. The cosine similarity of document and query vectors measures their textual relevance independently of document length.",
+    "outgoing_links": ["page_11", "page_13", "page_14"]
+  },
+  {
+    "id": "page_13",
+    "title": "Hybrid Ranking Architecture: Combining Content Relevance and PageRank",
+    "category": "Information Retrieval",
+    "content": "Structural importance alone cannot answer specific user queries, while pure keyword relevance can be tricked by keyword stuffing. A hybrid ranking engine calculates a convex combination of normalized TF-IDF relevance and normalized PageRank: FinalScore = alpha * Relevance + (1 - alpha) * PageRank. Tuning alpha balances topical precision against domain authority.",
+    "outgoing_links": ["page_01", "page_03", "page_12", "page_14"]
+  },
+  {
+    "id": "page_14",
+    "title": "Search Engine Evaluation Metrics: Precision, Recall, and Rank Correlation",
+    "category": "Information Retrieval",
+    "content": "Evaluating ranking algorithms requires objective mathematical metrics. Precision@K and Mean Average Precision measure retrieval quality. Spearman rank correlation coefficient and Kendall tau distance quantify the degree of agreement between different ranking methods, demonstrating how the addition of PageRank shifts pure keyword ordering.",
+    "outgoing_links": ["page_12", "page_13"]
+  },
+  {
+    "id": "page_15",
+    "title": "Adversarial Web Search: Link Spam, Link Farms, and Sybil Attacks",
+    "category": "Web Spam",
+    "content": "Spammers attempt to manipulate search rankings using artificial link farms. A link farm consists of multiple interconnected auxiliary pages created solely to funnel incoming links and inflate the PageRank of a target commercial page. Search engines counter link spam using TrustRank, spam detection classifiers, and penalizing suspicious graph density.",
+    "outgoing_links": ["page_03", "page_06", "page_17"]
+  },
+  {
+    "id": "page_16",
+    "title": "Personal Tech Blog: Quick Notes on PageRank and Markov Chains",
+    "category": "Web Architecture",
+    "content": "Just a casual personal blog post mentioning PageRank, Markov chains, random walks, and web graphs! PageRank is cool. PageRank is great. Keyword stuffing can happen here without any real external incoming links. Let us see how a search engine ranks this page when someone searches for PageRank.",
+    "outgoing_links": ["page_01"]
+  },
+  {
+    "id": "page_17",
+    "title": "Detecting Graph Manipulation with Spectral Sparsification",
+    "category": "Web Spam",
+    "content": "Graph theory provides powerful mathematical tools to detect synthetic link farms. By analyzing the spectrum of the adjacency matrix and clustering coefficients, search algorithms distinguish organic citations from coordinated link networks designed to game the PageRank equation.",
+    "outgoing_links": ["page_02", "page_05", "page_15"]
+  },
+  {
+    "id": "page_18",
+    "title": "Distributed Web Crawling and Dynamic Web Graph Evolution",
+    "category": "Web Architecture",
+    "content": "The web graph is non-static; millions of new hyperlinks and webpages appear daily while old links rot. Distributed crawlers continuously update adjacency representations. Incremental PageRank algorithms update stationary probabilities dynamically without recomputing the entire Markov transition matrix from scratch.",
+    "outgoing_links": ["page_01", "page_02", "page_06"]
+  }
+]
+

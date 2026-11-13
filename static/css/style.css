@@ -1,0 +1,74 @@
+/* Custom Stylesheet for MFCS Intelligent Search Ranking */
+
+:root {
+  --color-primary: #4f46e5;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+code, .font-mono {
+  font-family: 'Fira Code', monospace;
+}
+
+/* Custom Scrollbar - Light */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Custom Scrollbar - Dark */
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Active Tab */
+.tab-btn.active {
+  background-color: #4f46e5;
+  color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(79, 70, 229, 0.3);
+}
+
+/* Result Cards */
+.result-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.result-card:hover {
+  transform: translateY(-1px);
+}
+
+.light .result-card:hover {
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  border-color: #cbd5e1;
+}
+
+.dark .result-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border-color: #475569;
+}
+
+/* Vis.js network container */
+#network-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 580px;
+}

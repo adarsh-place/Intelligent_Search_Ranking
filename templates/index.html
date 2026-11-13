@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intelligent Search Ranking — MFCS Web Graph Studio</title>
+  <!-- Tailwind CSS with class dark mode -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Vis.js Network for Graph Visualization -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <!-- Chart.js for Markov Walk Convergence -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Styling -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
+
+  <!-- Simple, Clean Navbar -->
+  <header class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 md:px-8 py-3 flex items-center justify-between transition-colors">
+    <!-- Brand / Title -->
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-indigo-500/20">
+        Ω
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight">Intelligent Search Ranking</span>
+          <span class="text-[11px] px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-mono border border-indigo-200 dark:border-indigo-800">MFCS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="flex items-center bg-slate-100 dark:bg-slate-800/70 p-1 rounded-xl border border-slate-200 dark:border-slate-700/60 text-xs md:text-sm font-medium">
+      <button id="tab-search-btn" class="tab-btn active px-3.5 py-1.5 rounded-lg transition-all" onclick="switchTab('search')">
+        Search
+      </button>
+      <button id="tab-graph-btn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchTab('graph')">
+        Graph
+      </button>
+      <button id="tab-surfer-btn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchTab('surfer')">
+        Random Surfer
+      </button>
+      <button id="tab-experiments-btn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchTab('experiments')">
+        Lab & Spam
+      </button>
+    </nav>
+
+    <!-- Right Controls: Theme Toggler & Reset -->
+    <div class="flex items-center space-x-2">
+      <!-- Theme Toggler Button -->
+      <button
+        id="theme-toggle-btn"
+        onclick="toggleTheme()"
+        class="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+        title="Toggle Light / Dark Theme"
+      >
+        <!-- Sun (visible in dark mode) -->
+        <svg id="theme-icon-sun" class="w-4 h-4 hidden text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <!-- Moon (visible in light mode) -->
+        <svg id="theme-icon-moon" class="w-4 h-4 block text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
+
+      <!-- Baseline Reset Button -->
+      <button
+        onclick="resetGraphToDefault()"
+        class="px-3 py-1.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5"
+      >
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Reset Graph
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto p-4 md:p-6 space-y-6">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: SEARCH & HYBRID RANKING STUDIO     -->
+    <!-- ========================================== -->
+    <section id="view-search" class="tab-view space-y-5">
+      
+      <!-- Clean Search Card -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4 transition-colors">
+        
+        <!-- Search Input Bar -->
+        <div class="flex flex-col md:flex-row gap-2.5 items-center">
+          <div class="relative flex-1 w-full">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </span>
+            <input
+              id="search-input"
+              type="text"
+              value="PageRank Markov"
+              placeholder="Enter search keywords (e.g., PageRank, Markov chain, graph theory)..."
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium transition"
+              onkeydown="if(event.key === 'Enter') triggerSearch()"
+            />
+          </div>
+          <button
+            onclick="triggerSearch()"
+            class="w-full md:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition shadow-sm"
+          >
+            Search
+          </button>
+        </div>
+
+        <!-- Clean Query Pills -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs">
+          <span class="text-slate-400 mr-1">Suggestions:</span>
+          <button onclick="setQuery('PageRank'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">PageRank</button>
+          <button onclick="setQuery('Markov chain stationary distribution'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Markov Chain</button>
+          <button onclick="setQuery('graph theory adjacency matrix'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Graph Theory</button>
+          <button onclick="setQuery('spider trap dead end'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Spider Trap</button>
+          <button onclick="setQuery('vector space tf-idf cosine'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Vector Space</button>
+          <button onclick="setQuery('link spam farm'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Link Spam</button>
+        </div>
+
+        <!-- Sliders & Parameters -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-3 border-t border-slate-100 dark:border-slate-800">
+          
+          <!-- Alpha Slider -->
+          <div class="space-y-1">
+            <div class="flex justify-between items-center text-xs font-semibold">
+              <span class="text-slate-700 dark:text-slate-300">Relevance vs PageRank (&alpha;):</span>
+              <span id="alpha-val" class="font-mono text-indigo-600 dark:text-indigo-400 font-bold">0.50</span>
+            </div>
+            <input
+              id="alpha-slider"
+              type="range"
+              min="0.0"
+              max="1.0"
+              step="0.05"
+              value="0.50"
+              class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+              oninput="updateAlphaSlider(this.value)"
+            />
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>0 (100% PageRank)</span>
+              <span>0.5 (Balanced)</span>
+              <span>1 (100% Keyword)</span>
+            </div>
+          </div>
+
+          <!-- Damping Factor Slider -->
+          <div class="space-y-1">
+            <div class="flex justify-between items-center text-xs font-semibold">
+              <span class="text-slate-700 dark:text-slate-300">Damping Factor (d):</span>
+              <span id="damping-val" class="font-mono text-indigo-600 dark:text-indigo-400 font-bold">0.85</span>
+            </div>
+            <input
+              id="damping-slider"
+              type="range"
+              min="0.50"
+              max="0.99"
+              step="0.01"
+              value="0.85"
+              class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+              oninput="updateDampingSlider(this.value)"
+            />
+            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+              <span>0.50 (Teleport heavy)</span>
+              <span>0.85 (Standard)</span>
+              <span>0.99 (Links only)</span>
+            </div>
+          </div>
+
+          <!-- Filter Unmatched Documents -->
+          <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
+            <span class="text-slate-600 dark:text-slate-400">Filter non-matching pages:</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input id="filter-unmatched-chk" type="checkbox" checked onchange="triggerSearch()" class="sr-only peer">
+              <div class="w-9 h-5 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+            </label>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Quick Stats Strip -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
+          <div>
+            <div class="text-[11px] text-slate-500 font-medium">Candidates Found</div>
+            <div id="metric-candidates" class="text-base font-bold text-slate-900 dark:text-white font-mono">--</div>
+          </div>
+          <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">Docs</span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
+          <div>
+            <div class="text-[11px] text-slate-500 font-medium">Spearman &rho; (KW vs Hybrid)</div>
+            <div id="metric-rho-tfidf" class="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono">--</div>
+          </div>
+          <span class="text-xs px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-mono">&rho;<sub>KW</sub></span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
+          <div>
+            <div class="text-[11px] text-slate-500 font-medium">Spearman &rho; (PR vs Hybrid)</div>
+            <div id="metric-rho-pr" class="text-base font-bold text-indigo-600 dark:text-indigo-400 font-mono">--</div>
+          </div>
+          <span class="text-xs px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-mono">&rho;<sub>PR</sub></span>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
+          <div>
+            <div class="text-[11px] text-slate-500 font-medium">Power Iterations</div>
+            <div id="metric-iterations" class="text-base font-bold text-amber-600 dark:text-amber-400 font-mono">--</div>
+          </div>
+          <span class="text-xs px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-mono">Iters</span>
+        </div>
+      </div>
+
+      <!-- 3-Way Search Comparison Columns -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        
+        <!-- Col 1: Keyword Only -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-between">
+            <div>
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">1. Keyword Matching (TF-IDF)</h3>
+              <p class="text-[11px] text-slate-500">Pure lexical frequency (&alpha; = 1.0)</p>
+            </div>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-mono font-semibold">TF-IDF</span>
+          </div>
+          <div id="col-keyword-results" class="p-3.5 space-y-2.5 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
+        </div>
+
+        <!-- Col 2: PageRank Only -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-between">
+            <div>
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">2. Web Authority (PageRank)</h3>
+              <p class="text-[11px] text-slate-500">Pure structural link mass (&alpha; = 0.0)</p>
+            </div>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-mono font-semibold">PageRank</span>
+          </div>
+          <div id="col-pagerank-results" class="p-3.5 space-y-2.5 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
+        </div>
+
+        <!-- Col 3: Hybrid Combined -->
+        <div class="bg-white dark:bg-slate-900 border-2 border-indigo-500 dark:border-indigo-500/80 rounded-2xl flex flex-col shadow-md overflow-hidden">
+          <div class="px-4 py-3 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50/70 dark:bg-indigo-950/40 flex items-center justify-between">
+            <div>
+              <h3 class="text-xs font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider">3. Combined Intelligent Ranking</h3>
+              <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-mono">&alpha;&middot;R_norm + (1-&alpha;)&middot;PR_norm</p>
+            </div>
+            <span id="col-hybrid-badge" class="text-[11px] px-2 py-0.5 rounded bg-indigo-600 text-white font-mono font-bold">&alpha; = 0.50</span>
+          </div>
+          <div id="col-hybrid-results" class="p-3.5 space-y-2.5 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: WEB GRAPH NETWORK EXPLORER          -->
+    <!-- ========================================== -->
+    <section id="view-graph" class="tab-view hidden space-y-4">
+      
+      <div class="grid grid-cols-1 xl:grid-cols-4 gap-5">
+        
+        <!-- Graph Canvas Area (3 Cols) -->
+        <div class="xl:col-span-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col h-[700px] shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Directed Web Graph Topology</h3>
+              <p class="text-xs text-slate-500">Node size &prop; PageRank | Directed arrows indicate hyperlinks</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="fitGraphView()" class="px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Fit View</button>
+              <button id="physics-toggle-btn" onclick="toggleGraphPhysics()" class="px-2.5 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Freeze Physics</button>
+            </div>
+          </div>
+
+          <!-- Vis Canvas -->
+          <div id="network-canvas" class="flex-1 w-full rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800"></div>
+
+          <!-- Clean Legend -->
+          <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-500">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#6366F1]"></span> Graph Theory</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#8B5CF6]"></span> PageRank</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EC4899]"></span> Probability</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span> IR</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span> Architecture</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span> Link Spam</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span> Spider Trap</span>
+            </div>
+            <span class="text-slate-400 font-mono text-[11px]">Click a node to inspect</span>
+          </div>
+        </div>
+
+        <!-- Node Inspector & Simple Edge Editor (1 Col) -->
+        <div class="space-y-4">
+          
+          <!-- Inspector -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Node Details</h3>
+              <span id="inspect-node-id" class="text-xs px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-mono">Select a node</span>
+            </div>
+            <div id="inspect-node-body" class="text-xs text-slate-500 space-y-2">
+              <p>Click any node in the graph to view its title, PageRank score, and link connectivity.</p>
+            </div>
+          </div>
+
+          <!-- Dynamic Link Editor -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
+            <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Add / Remove Links</h3>
+            <div class="space-y-2 text-xs">
+              <div>
+                <label class="text-slate-500 block mb-1">Source Page</label>
+                <select id="edge-source-select" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-slate-900 dark:text-white focus:outline-none"></select>
+              </div>
+              <div>
+                <label class="text-slate-500 block mb-1">Target Page</label>
+                <select id="edge-target-select" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-slate-900 dark:text-white focus:outline-none"></select>
+              </div>
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="addLinkDynamic()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition">Add Link &rarr;</button>
+                <button onclick="removeLinkDynamic()" class="px-3 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-medium transition">Remove Link</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: MARKOV RANDOM SURFER LAB           -->
+    <!-- ========================================== -->
+    <section id="view-surfer" class="tab-view hidden space-y-5">
+      
+      <!-- Controls -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 dark:text-white">Monte Carlo Random Surfer Simulation</h2>
+          <p class="text-xs text-slate-500">Simulates user browsing hops to show empirical visit frequencies converging to theoretical PageRank.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <select id="surfer-steps-select" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-white">
+            <option value="500">500 Steps</option>
+            <option value="1500" selected>1,500 Steps</option>
+            <option value="5000">5,000 Steps</option>
+          </select>
+          <button onclick="runRandomWalkSimulation()" class="px-4 py-1.5 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-semibold text-xs transition">
+            Run Simulation
+          </button>
+        </div>
+      </div>
+
+      <!-- Chart and Trajectory -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[480px]">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Empirical Frequency vs Theoretical PageRank</h3>
+            <span id="surfer-l1-badge" class="text-xs px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-mono">L1 Error: --</span>
+          </div>
+          <div class="flex-1 relative">
+            <canvas id="surferComparisonChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[480px] space-y-3">
+          <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Walk Trajectory Log</h3>
+          <div class="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-mono space-y-1">
+            <div class="flex justify-between text-slate-500"><span>Start:</span> <span id="walk-start-node" class="text-pink-600 dark:text-pink-400 font-bold">--</span></div>
+            <div class="flex justify-between text-slate-500"><span>Steps:</span> <span id="walk-total-steps" class="text-slate-900 dark:text-white">--</span></div>
+            <div class="flex justify-between text-slate-500"><span>End:</span> <span id="walk-end-node" class="text-pink-600 dark:text-pink-400 font-bold">--</span></div>
+          </div>
+          <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="text-[11px] text-slate-400 mb-1">Hop Sequence:</div>
+            <div id="walk-trajectory-list" class="flex-1 p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-[11px] overflow-y-auto space-y-1 scrollbar-thin">
+              <span class="text-slate-400">Click Run Simulation to view path...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: WHAT-IF & EXPERIMENT LAB           -->
+    <!-- ========================================== -->
+    <section id="view-experiments" class="tab-view hidden space-y-5">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        
+        <!-- Experiment 1: Link Farm -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">1. Link Farm Spam Attack</h3>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 font-mono">Sybil</span>
+          </div>
+          <p class="text-xs text-slate-500">Injects 5 synthetic bot pages linking to each other and pointing to <span class="font-mono font-bold text-slate-700 dark:text-slate-300">page_16</span> (Personal Tech Blog) to artificially inflate its ranking.</p>
+          <button onclick="runSpamExperiment()" class="w-full py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs transition">
+            Execute Link Farm Attack
+          </button>
+          <div id="spam-experiment-results" class="hidden p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 rounded-xl text-xs space-y-1"></div>
+        </div>
+
+        <!-- Experiment 2: Spider Trap -->
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">2. Spider Trap Simulation</h3>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 font-mono">Cycle</span>
+          </div>
+          <p class="text-xs text-slate-500">Tests how a closed 2-cycle loop absorbs random walk probability with standard damping (d = 0.85) vs without teleportation (d = 0.99).</p>
+          <button onclick="runSpiderTrapExperiment()" class="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition">
+            Simulate Spider Trap
+          </button>
+          <div id="trap-experiment-results" class="hidden p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-xl text-xs space-y-1"></div>
+        </div>
+
+      </div>
+
+      <!-- Damping Sensitivity Chart -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Damping Factor Sensitivity (d &in; [0.10, 0.99])</h3>
+            <p class="text-xs text-slate-500">Distribution Shannon entropy & iteration count across varying damping factors</p>
+          </div>
+          <button onclick="loadDampingExperiment()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Refresh</button>
+        </div>
+        <div class="h-60 relative">
+          <canvas id="dampingSensitivityChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Clean Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-3 px-6 text-center text-xs text-slate-500">
+    MFCS Project • Intelligent Search Ranking Using Web Graphs
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+</body>
+</html>
