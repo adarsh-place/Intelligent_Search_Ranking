@@ -5,6 +5,8 @@
 
 // Application State
 let activeTab = 'search';
+let searchViewMode = 'unified'; // 'unified' or 'compare'
+let selectedDocId = null;
 let networkInstance = null;
 let networkData = null;
 let graphCache = null;
@@ -184,26 +186,273 @@ async function triggerSearch() {
   }
 }
 
+function setSearchViewMode(mode) {
+  searchViewMode = mode;
+  const unifiedBtn = document.getElementById('view-mode-unified-btn');
+  const compareBtn = document.getElementById('view-mode-compare-btn');
+  const unifiedView = document.getElementById('search-unified-view');
+  const compareView = document.getElementById('search-compare-view');
+
+  if (mode === 'unified') {
+    if (unifiedBtn) {
+      unifiedBtn.classList.add('active');
+      unifiedBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+    }
+    if (compareBtn) {
+      compareBtn.classList.remove('active');
+      compareBtn.classList.add('text-slate-600', 'dark:text-slate-400');
+    }
+    if (unifiedView) unifiedView.classList.remove('hidden');
+    if (compareView) compareView.classList.add('hidden');
+  } else {
+    if (compareBtn) {
+      compareBtn.classList.add('active');
+      compareBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+    }
+    if (unifiedBtn) {
+      unifiedBtn.classList.remove('active');
+      unifiedBtn.classList.add('text-slate-600', 'dark:text-slate-400');
+    }
+    if (compareView) compareView.classList.remove('hidden');
+    if (unifiedView) unifiedView.classList.add('hidden');
+  }
+}
+
 function updateMetricsRibbon(data) {
-  document.getElementById('metric-candidates').innerText = data.num_candidates;
-  document.getElementById('metric-rho-tfidf').innerText = (data.correlations.spearman_keyword_vs_combined).toFixed(3);
-  document.getElementById('metric-rho-pr').innerText = (data.correlations.spearman_pagerank_vs_combined).toFixed(3);
+  const candElem = document.getElementById('metric-candidates');
+  const rhoTfElem = document.getElementById('metric-rho-tfidf');
+  const rhoPrElem = document.getElementById('metric-rho-pr');
+  const iterElem = document.getElementById('metric-iterations');
+
+  if (candElem) candElem.innerText = data.num_candidates;
+  if (rhoTfElem) rhoTfElem.innerText = (data.correlations.spearman_keyword_vs_combined).toFixed(3);
+  if (rhoPrElem) rhoPrElem.innerText = (data.correlations.spearman_pagerank_vs_combined).toFixed(3);
   
   const iters = data.pagerank_metadata?.iterations || '--';
-  document.getElementById('metric-iterations').innerText = `${iters}`;
+  if (iterElem) iterElem.innerText = `${iters}`;
 }
 
 function renderSearchResults(data) {
+  // 1. Render Unified Stream
+  renderUnifiedResults(data.combined_ranking, data.alpha);
+
+  // 2. Render 3-Way Compare Columns
   renderColumn(document.getElementById('col-keyword-results'), data.keyword_only_ranking, 'keyword');
   renderColumn(document.getElementById('col-pagerank-results'), data.pagerank_only_ranking, 'pagerank');
   renderColumn(document.getElementById('col-hybrid-results'), data.combined_ranking, 'hybrid');
 }
 
-function renderColumn(container, records, colType) {
+function renderUnifiedResults(records, alpha) {
+  const container = document.getElementById('unified-results-container');
+  if (!container) return;
+
   if (!records || records.length === 0) {
     container.innerHTML = `
+      <div class="p-8 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-400 text-xs">
+        No documents matched your query filter. Try broadening your keywords or unchecking "Filter unmatched".
+      </div>`;
+    renderDocumentInspector(null);
+    return;
+  }
+
+  // Ensure an item is selected
+  if (!selectedDocId || !records.some(r => r.id === selectedDocId)) {
+    selectedDocId = records[0].id;
+  }
+
+  container.innerHTML = records.map((item, index) => {
+    const isSelected = (item.id === selectedDocId);
+    const shift = item.rank_shift;
+    let rankShiftBadge = '';
+
+    if (shift > 0) {
+      rankShiftBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 font-mono font-semibold border border-emerald-200/60 dark:border-emerald-800/60 flex items-center gap-0.5">▲ +${shift} Boost</span>`;
+    } else if (shift < 0) {
+      rankShiftBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 font-mono font-semibold border border-rose-200/60 dark:border-rose-800/60 flex items-center gap-0.5">▼ ${shift} Demoted</span>`;
+    } else {
+      rankShiftBadge = `<span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono">= Steady</span>`;
+    }
+
+    const matchedHtml = item.matched_terms && item.matched_terms.length > 0
+      ? `<div class="flex flex-wrap gap-1 mt-2">${item.matched_terms.map(t => `<span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 text-[10px] font-mono border border-indigo-200/50 dark:border-indigo-800/50">${t}</span>`).join('')}</div>`
+      : '';
+
+    return `
+      <div
+        id="card-${item.id}"
+        onclick="selectDocumentForInspector('${item.id}')"
+        class="result-card ${isSelected ? 'selected' : ''} p-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-sm space-y-2.5 transition-all"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-xl bg-indigo-600 text-white font-mono font-bold text-xs flex items-center justify-center shadow-sm shrink-0 mt-0.5">
+              ${index + 1}
+            </span>
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors line-clamp-1">
+                ${item.title}
+              </h4>
+              <div class="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-500 font-mono">
+                <span class="font-bold text-indigo-600 dark:text-indigo-400">${item.id}</span>
+                <span>&bull;</span>
+                <span class="text-slate-600 dark:text-slate-400">${item.category}</span>
+                <span>&bull;</span>
+                <span>${item.in_degree} citations</span>
+              </div>
+            </div>
+          </div>
+          ${rankShiftBadge}
+        </div>
+
+        <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pl-10">
+          ${item.content_snippet}
+        </p>
+
+        ${matchedHtml ? `<div class="pl-10">${matchedHtml}</div>` : ''}
+
+        <div class="pl-10 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 font-mono px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 border border-indigo-200/50 dark:border-indigo-800/50">
+              Score: ${item.final_score.toFixed(4)}
+            </span>
+            <span class="text-[11px] text-slate-400 font-mono">
+              (R_norm: ${item.norm_relevance.toFixed(2)} &bull; PR_norm: ${item.norm_pagerank.toFixed(2)})
+            </span>
+          </div>
+          <span class="text-[11px] text-slate-400 hover:text-indigo-500 transition-colors font-medium flex items-center gap-1">
+            <span>Inspect math</span> &rarr;
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Update inspector for the selected document
+  const selectedDoc = records.find(r => r.id === selectedDocId) || records[0];
+  renderDocumentInspector(selectedDoc, alpha);
+}
+
+function selectDocumentForInspector(docId) {
+  selectedDocId = docId;
+
+  // Highlight selected card visually
+  document.querySelectorAll('#unified-results-container .result-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  const activeCard = document.getElementById(`card-${docId}`);
+  if (activeCard) activeCard.classList.add('selected');
+
+  if (currentSearchData && currentSearchData.combined_ranking) {
+    const doc = currentSearchData.combined_ranking.find(r => r.id === docId);
+    if (doc) renderDocumentInspector(doc, currentSearchData.alpha);
+  }
+}
+
+function renderDocumentInspector(doc, alpha) {
+  const panel = document.getElementById('unified-inspector-panel');
+  if (!panel) return;
+
+  if (!doc) {
+    panel.innerHTML = `
       <div class="text-center py-10 text-slate-400 text-xs">
-        No documents match query filter.
+        No document selected.
+      </div>`;
+    return;
+  }
+
+  const a = (alpha !== undefined) ? alpha : 0.50;
+  const contentScore = a * doc.norm_relevance;
+  const authorityScore = (1.0 - a) * doc.norm_pagerank;
+  const totalScore = contentScore + authorityScore;
+
+  const contentPct = totalScore > 0 ? Math.round((contentScore / totalScore) * 100) : 50;
+  const authorityPct = totalScore > 0 ? (100 - contentPct) : 50;
+
+  panel.innerHTML = `
+    <div class="space-y-4">
+      
+      <!-- Header -->
+      <div class="border-b border-slate-100 dark:border-slate-800/80 pb-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-mono font-bold text-[10px] border border-indigo-200/60 dark:border-indigo-800/60">
+            ${doc.id}
+          </span>
+          <span class="text-slate-500 text-[11px]">${doc.category}</span>
+        </div>
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white mt-1.5 leading-snug">
+          ${doc.title}
+        </h3>
+      </div>
+
+      <!-- Score Composition Visual Bar -->
+      <div class="space-y-1.5">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-600 dark:text-slate-400 font-medium">Score Composition:</span>
+          <span class="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">${doc.final_score.toFixed(4)}</span>
+        </div>
+        <div class="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex shadow-inner">
+          <div style="width: ${contentPct}%" class="bg-indigo-500 h-full transition-all" title="Content Relevance: ${contentPct}%"></div>
+          <div style="width: ${authorityPct}%" class="bg-violet-500 h-full transition-all" title="PageRank Authority: ${authorityPct}%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] font-mono text-slate-500">
+          <span class="text-indigo-600 dark:text-indigo-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Relevance: ${contentPct}%</span>
+          <span class="text-violet-600 dark:text-violet-400 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span> PageRank: ${authorityPct}%</span>
+        </div>
+      </div>
+
+      <!-- Mathematical Equation Breakdown -->
+      <div class="p-3 bg-slate-50 dark:bg-slate-950/70 rounded-xl border border-slate-200/70 dark:border-slate-800/80 space-y-2 text-xs">
+        <div class="font-mono font-semibold text-slate-700 dark:text-slate-300 text-[11px]">
+          FinalScore = &alpha;&middot;R_norm + (1-&alpha;)&middot;PR_norm
+        </div>
+        <div class="font-mono text-[11px] text-slate-600 dark:text-slate-400">
+          = (${a.toFixed(2)} &times; ${doc.norm_relevance.toFixed(3)}) + (${(1-a).toFixed(2)} &times; ${doc.norm_pagerank.toFixed(3)})
+        </div>
+        <div class="font-mono text-[11px] text-indigo-600 dark:text-indigo-400 font-bold border-t border-slate-200/50 dark:border-slate-800/50 pt-1.5 flex justify-between">
+          <span>= ${contentScore.toFixed(4)} + ${authorityScore.toFixed(4)}</span>
+          <span>= ${doc.final_score.toFixed(4)}</span>
+        </div>
+      </div>
+
+      <!-- Dimension Metrics Grid -->
+      <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+        <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60">
+          <div class="text-[10px] text-slate-400">Raw TF-IDF Cosine</div>
+          <div class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5">${doc.raw_relevance.toFixed(4)}</div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60">
+          <div class="text-[10px] text-slate-400">Raw PageRank (&pi;)</div>
+          <div class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5">${doc.raw_pagerank.toFixed(5)}</div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60">
+          <div class="text-[10px] text-slate-400">In-Degree (Backlinks)</div>
+          <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">${doc.in_degree}</div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-950/50 border border-slate-200/60 dark:border-slate-800/60">
+          <div class="text-[10px] text-slate-400">Out-Degree (Links)</div>
+          <div class="text-xs font-bold text-violet-600 dark:text-violet-400 mt-0.5">${doc.out_degree}</div>
+        </div>
+      </div>
+
+      <!-- Rank Shift Impact -->
+      <div class="p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 text-[11px] text-slate-600 dark:text-slate-400 flex items-center justify-between">
+        <span>Keyword Rank: <strong class="text-slate-900 dark:text-white font-mono">#${doc.keyword_rank}</strong></span>
+        <span>&rarr;</span>
+        <span>Combined: <strong class="text-indigo-600 dark:text-indigo-400 font-mono">#${doc.combined_rank}</strong></span>
+        <span>(${doc.rank_shift >= 0 ? '+' + doc.rank_shift : doc.rank_shift})</span>
+      </div>
+
+    </div>
+  `;
+}
+
+function renderColumn(container, records, colType) {
+  if (!container) return;
+
+  if (!records || records.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-8 text-slate-400 text-xs">
+        No documents match query.
       </div>`;
     return;
   }
@@ -215,15 +464,14 @@ function renderColumn(container, records, colType) {
 
     if (colType === 'keyword') {
       rankBadge = `<span class="w-5 h-5 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-mono font-bold text-xs flex items-center justify-center">${index + 1}</span>`;
-      scorePill = `<span class="text-blue-600 dark:text-blue-400 font-mono">TF-IDF: ${item.raw_relevance.toFixed(3)}</span>`;
+      scorePill = `<span class="text-blue-600 dark:text-blue-400 font-mono text-[10px]">TF-IDF: ${item.raw_relevance.toFixed(3)}</span>`;
     } else if (colType === 'pagerank') {
       rankBadge = `<span class="w-5 h-5 rounded-md bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-mono font-bold text-xs flex items-center justify-center">${index + 1}</span>`;
-      scorePill = `<span class="text-purple-600 dark:text-purple-400 font-mono">PR: ${item.raw_pagerank.toFixed(4)}</span>`;
+      scorePill = `<span class="text-purple-600 dark:text-purple-400 font-mono text-[10px]">PR: ${item.raw_pagerank.toFixed(4)}</span>`;
     } else {
       rankBadge = `<span class="w-5 h-5 rounded-md bg-indigo-600 text-white font-mono font-bold text-xs flex items-center justify-center shadow-sm">${index + 1}</span>`;
-      scorePill = `<span class="text-indigo-600 dark:text-indigo-400 font-mono font-semibold">Score: ${item.final_score.toFixed(3)}</span>`;
+      scorePill = `<span class="text-indigo-600 dark:text-indigo-400 font-mono font-bold text-[10px]">Score: ${item.final_score.toFixed(3)}</span>`;
 
-      // Rank Shift indicator comparing Keyword Rank vs Combined Rank
       const shift = item.rank_shift;
       if (shift > 0) {
         rankChangePill = `<span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-mono font-semibold">▲ +${shift}</span>`;
@@ -235,7 +483,7 @@ function renderColumn(container, records, colType) {
     }
 
     return `
-      <div class="result-card p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-xl space-y-1.5">
+      <div class="result-card p-3 bg-slate-50/80 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800/80 rounded-xl space-y-1.5">
         <div class="flex items-start justify-between gap-2">
           <div class="flex items-start gap-2">
             ${rankBadge}
@@ -255,10 +503,10 @@ function renderColumn(container, records, colType) {
 
         <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-snug line-clamp-2">${item.content_snippet}</p>
 
-        <div class="pt-1.5 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[10px]">
+        <div class="pt-1.5 border-t border-slate-200/70 dark:border-slate-800/70 flex items-center justify-between text-[10px]">
           ${scorePill}
           <div class="text-slate-400 font-mono">
-            R_norm:${item.norm_relevance.toFixed(2)} | PR_norm:${item.norm_pagerank.toFixed(2)}
+            R_n: ${item.norm_relevance.toFixed(2)} | PR_n: ${item.norm_pagerank.toFixed(2)}
           </div>
         </div>
       </div>

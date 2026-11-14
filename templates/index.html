@@ -41,7 +41,6 @@
       <div>
         <div class="flex items-center gap-2">
           <span class="text-sm md:text-base font-bold text-slate-900 dark:text-white tracking-tight">Intelligent Search Ranking</span>
-          <span class="text-[11px] px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-mono border border-indigo-200 dark:border-indigo-800">MFCS</span>
         </div>
       </div>
     </div>
@@ -89,58 +88,61 @@
   </header>
 
   <!-- Main Content Container -->
-  <main class="flex-1 max-w-[1600px] w-full mx-auto p-4 md:p-6 space-y-6">
+  <main class="flex-1 max-w-[1520px] w-full mx-auto p-4 md:p-6 space-y-6">
 
     <!-- ========================================== -->
     <!-- TAB 1: SEARCH & HYBRID RANKING STUDIO     -->
     <!-- ========================================== -->
-    <section id="view-search" class="tab-view space-y-5">
+    <section id="view-search" class="tab-view space-y-4">
       
-      <!-- Clean Search Card -->
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4 transition-colors">
+      <!-- Clean Floating Search Bar Card -->
+      <div class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-3.5 transition-colors">
         
         <!-- Search Input Bar -->
-        <div class="flex flex-col md:flex-row gap-2.5 items-center">
+        <div class="flex flex-col sm:flex-row gap-2.5 items-center">
           <div class="relative flex-1 w-full">
             <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </span>
             <input
               id="search-input"
               type="text"
               value="PageRank Markov"
-              placeholder="Enter search keywords (e.g., PageRank, Markov chain, graph theory)..."
-              class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium transition"
+              placeholder="Search concepts (e.g., PageRank, Markov chain, graph theory, spider trap)..."
+              class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50/80 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm font-medium transition"
               onkeydown="if(event.key === 'Enter') triggerSearch()"
             />
           </div>
           <button
             onclick="triggerSearch()"
-            class="w-full md:w-auto px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition shadow-sm"
+            class="w-full sm:w-auto px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2"
           >
-            Search
+            <span>Search</span>
           </button>
         </div>
 
-        <!-- Clean Query Pills -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs">
-          <span class="text-slate-400 mr-1">Suggestions:</span>
-          <button onclick="setQuery('PageRank'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">PageRank</button>
-          <button onclick="setQuery('Markov chain stationary distribution'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Markov Chain</button>
-          <button onclick="setQuery('graph theory adjacency matrix'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Graph Theory</button>
-          <button onclick="setQuery('spider trap dead end'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Spider Trap</button>
-          <button onclick="setQuery('vector space tf-idf cosine'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Vector Space</button>
-          <button onclick="setQuery('link spam farm'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">Link Spam</button>
+        <!-- Clean Suggestion Chips -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+          <span class="text-slate-400 font-medium mr-1">Suggestions:</span>
+          <button onclick="setQuery('PageRank'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">PageRank</button>
+          <button onclick="setQuery('Markov chain stationary distribution'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Markov Chain</button>
+          <button onclick="setQuery('graph theory adjacency matrix'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Graph Theory</button>
+          <button onclick="setQuery('spider trap dead end'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Spider Trap</button>
+          <button onclick="setQuery('vector space tf-idf cosine'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Vector Space</button>
+          <button onclick="setQuery('link spam farm'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Link Spam</button>
         </div>
 
-        <!-- Sliders & Parameters -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <!-- Minimalist Tuning & View Controller Strip -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 items-center">
           
-          <!-- Alpha Slider -->
-          <div class="space-y-1">
+          <!-- Alpha Slider (5 Cols) -->
+          <div class="md:col-span-5 space-y-1">
             <div class="flex justify-between items-center text-xs font-semibold">
-              <span class="text-slate-700 dark:text-slate-300">Relevance vs PageRank (&alpha;):</span>
-              <span id="alpha-val" class="font-mono text-indigo-600 dark:text-indigo-400 font-bold">0.50</span>
+              <span class="text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                Relevance vs PageRank (&alpha;):
+              </span>
+              <span id="alpha-val" class="font-mono text-indigo-600 dark:text-indigo-400 font-bold px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200/60 dark:border-indigo-800/60 text-[11px]">0.50</span>
             </div>
             <input
               id="alpha-slider"
@@ -152,18 +154,18 @@
               class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
               oninput="updateAlphaSlider(this.value)"
             />
-            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-              <span>0 (100% PageRank)</span>
-              <span>0.5 (Balanced)</span>
-              <span>1 (100% Keyword)</span>
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>0.0 (Authority Only)</span>
+              <span>0.50 (Balanced)</span>
+              <span>1.0 (Content Only)</span>
             </div>
           </div>
 
-          <!-- Damping Factor Slider -->
-          <div class="space-y-1">
+          <!-- Damping Slider (3 Cols) -->
+          <div class="md:col-span-3 space-y-1">
             <div class="flex justify-between items-center text-xs font-semibold">
-              <span class="text-slate-700 dark:text-slate-300">Damping Factor (d):</span>
-              <span id="damping-val" class="font-mono text-indigo-600 dark:text-indigo-400 font-bold">0.85</span>
+              <span class="text-slate-700 dark:text-slate-300">Damping (d):</span>
+              <span id="damping-val" class="font-mono text-slate-600 dark:text-slate-400 font-bold text-[11px]">0.85</span>
             </div>
             <input
               id="damping-slider"
@@ -175,98 +177,121 @@
               class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
               oninput="updateDampingSlider(this.value)"
             />
-            <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-              <span>0.50 (Teleport heavy)</span>
-              <span>0.85 (Standard)</span>
-              <span>0.99 (Links only)</span>
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>0.50 (Teleport)</span>
+              <span>0.85</span>
+              <span>0.99 (Links)</span>
             </div>
           </div>
 
-          <!-- Filter Unmatched Documents -->
-          <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs">
-            <span class="text-slate-600 dark:text-slate-400">Filter non-matching pages:</span>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input id="filter-unmatched-chk" type="checkbox" checked onchange="triggerSearch()" class="sr-only peer">
-              <div class="w-9 h-5 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+          <!-- Right View Switcher & Filter (4 Cols) -->
+          <div class="md:col-span-4 flex flex-wrap items-center justify-between sm:justify-end gap-3">
+            <label class="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
+              <input id="filter-unmatched-chk" type="checkbox" checked onchange="triggerSearch()" class="rounded bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-0 cursor-pointer w-3.5 h-3.5" />
+              <span>Filter unmatched</span>
             </label>
+
+            <!-- Segmented View Mode Switcher -->
+            <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium">
+              <button
+                id="view-mode-unified-btn"
+                onclick="setSearchViewMode('unified')"
+                class="view-mode-btn active px-3 py-1 rounded-lg transition-all"
+                title="Spacious unified results with side analytical inspector"
+              >
+                Focused
+              </button>
+              <button
+                id="view-mode-compare-btn"
+                onclick="setSearchViewMode('compare')"
+                class="view-mode-btn px-3 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"
+                title="Side-by-side 3-way ranking comparison"
+              >
+                3-Way Compare
+              </button>
+            </div>
           </div>
 
         </div>
 
       </div>
 
-      <!-- Quick Stats Strip -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
-          <div>
-            <div class="text-[11px] text-slate-500 font-medium">Candidates Found</div>
-            <div id="metric-candidates" class="text-base font-bold text-slate-900 dark:text-white font-mono">--</div>
-          </div>
-          <span class="text-xs px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">Docs</span>
+      <!-- Clean Status & Metrics Ribbon -->
+      <div class="flex flex-wrap items-center justify-between px-3 py-2 bg-slate-100/70 dark:bg-slate-900/40 rounded-xl border border-slate-200/60 dark:border-slate-800 text-xs text-slate-500">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Found <strong id="metric-candidates" class="text-slate-900 dark:text-white font-mono font-bold">--</strong> candidate documents</span>
         </div>
-
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
-          <div>
-            <div class="text-[11px] text-slate-500 font-medium">Spearman &rho; (KW vs Hybrid)</div>
-            <div id="metric-rho-tfidf" class="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono">--</div>
-          </div>
-          <span class="text-xs px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-mono">&rho;<sub>KW</sub></span>
-        </div>
-
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
-          <div>
-            <div class="text-[11px] text-slate-500 font-medium">Spearman &rho; (PR vs Hybrid)</div>
-            <div id="metric-rho-pr" class="text-base font-bold text-indigo-600 dark:text-indigo-400 font-mono">--</div>
-          </div>
-          <span class="text-xs px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-mono">&rho;<sub>PR</sub></span>
-        </div>
-
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
-          <div>
-            <div class="text-[11px] text-slate-500 font-medium">Power Iterations</div>
-            <div id="metric-iterations" class="text-base font-bold text-amber-600 dark:text-amber-400 font-mono">--</div>
-          </div>
-          <span class="text-xs px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-mono">Iters</span>
+        <div class="flex flex-wrap items-center gap-4 font-mono text-[11px]">
+          <span>Spearman &rho;<sub>KW</sub>: <strong id="metric-rho-tfidf" class="text-emerald-600 dark:text-emerald-400 font-bold">--</strong></span>
+          <span>&bull;</span>
+          <span>Spearman &rho;<sub>PR</sub>: <strong id="metric-rho-pr" class="text-indigo-600 dark:text-indigo-400 font-bold">--</strong></span>
+          <span>&bull;</span>
+          <span>Iterations: <strong id="metric-iterations" class="text-amber-600 dark:text-amber-400 font-bold">--</strong></span>
         </div>
       </div>
 
-      <!-- 3-Way Search Comparison Columns -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <!-- ======================================================== -->
+      <!-- VIEW MODE A: FOCUSED UNIFIED RESULTS STREAM (DEFAULT)    -->
+      <!-- ======================================================== -->
+      <div id="search-unified-view" class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        
+        <!-- Left: Beautiful Spacious Result Cards Stream (8 Cols) -->
+        <div class="lg:col-span-8 space-y-3" id="unified-results-container">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Right: Real-time Mathematical Document Inspector (4 Cols) -->
+        <div class="lg:col-span-4 sticky top-20 space-y-4">
+          <div id="unified-inspector-panel" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
+            <!-- Dynamically populated via JS when card clicked -->
+            <div class="text-center py-10 text-slate-400 text-xs">
+              Click any search result card to inspect its exact mathematical score composition.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- VIEW MODE B: 3-WAY COMPARATIVE COLUMNS (OPTIONAL TOGGLE) -->
+      <!-- ======================================================== -->
+      <div id="search-compare-view" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         <!-- Col 1: Keyword Only -->
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col shadow-sm overflow-hidden">
-          <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-between">
+          <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 flex items-center justify-between">
             <div>
-              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">1. Keyword Matching (TF-IDF)</h3>
-              <p class="text-[11px] text-slate-500">Pure lexical frequency (&alpha; = 1.0)</p>
+              <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">1. Keyword Only (TF-IDF)</h3>
+              <p class="text-[11px] text-slate-400">Lexical content frequency (&alpha; = 1.0)</p>
             </div>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-mono font-semibold">TF-IDF</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-mono font-semibold">TF-IDF</span>
           </div>
-          <div id="col-keyword-results" class="p-3.5 space-y-2.5 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
+          <div id="col-keyword-results" class="p-3 space-y-2 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
         </div>
 
         <!-- Col 2: PageRank Only -->
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col shadow-sm overflow-hidden">
-          <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex items-center justify-between">
+          <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950 flex items-center justify-between">
             <div>
-              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">2. Web Authority (PageRank)</h3>
-              <p class="text-[11px] text-slate-500">Pure structural link mass (&alpha; = 0.0)</p>
+              <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">2. Web Authority (PageRank)</h3>
+              <p class="text-[11px] text-slate-400">Hyperlink connectivity (&alpha; = 0.0)</p>
             </div>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-mono font-semibold">PageRank</span>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-mono font-semibold">PageRank</span>
           </div>
-          <div id="col-pagerank-results" class="p-3.5 space-y-2.5 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
+          <div id="col-pagerank-results" class="p-3 space-y-2 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
         </div>
 
         <!-- Col 3: Hybrid Combined -->
-        <div class="bg-white dark:bg-slate-900 border-2 border-indigo-500 dark:border-indigo-500/80 rounded-2xl flex flex-col shadow-md overflow-hidden">
-          <div class="px-4 py-3 border-b border-indigo-100 dark:border-indigo-900 bg-indigo-50/70 dark:bg-indigo-950/40 flex items-center justify-between">
+        <div class="bg-white dark:bg-slate-900 border-2 border-indigo-500/80 rounded-2xl flex flex-col shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-indigo-100 dark:border-indigo-900/60 bg-indigo-50/50 dark:bg-indigo-950/40 flex items-center justify-between">
             <div>
-              <h3 class="text-xs font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider">3. Combined Intelligent Ranking</h3>
+              <h3 class="text-xs font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider">3. Combined Intelligent</h3>
               <p class="text-[11px] text-indigo-600 dark:text-indigo-400 font-mono">&alpha;&middot;R_norm + (1-&alpha;)&middot;PR_norm</p>
             </div>
-            <span id="col-hybrid-badge" class="text-[11px] px-2 py-0.5 rounded bg-indigo-600 text-white font-mono font-bold">&alpha; = 0.50</span>
+            <span id="col-hybrid-badge" class="text-[10px] px-2 py-0.5 rounded bg-indigo-600 text-white font-mono font-bold">&alpha; = 0.50</span>
           </div>
-          <div id="col-hybrid-results" class="p-3.5 space-y-2.5 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
+          <div id="col-hybrid-results" class="p-3 space-y-2 flex-1 overflow-y-auto max-h-[640px] scrollbar-thin"></div>
         </div>
 
       </div>

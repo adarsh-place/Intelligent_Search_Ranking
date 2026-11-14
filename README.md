@@ -147,12 +147,12 @@ Open your browser and navigate to:
 ## 5. Interactive Studio Capabilities
 
 1. **Search Studio**:
-   * Live hybrid search with instant 3-way ranking comparison columns:
-     * **Column 1**: Pure Lexical / Keyword matching ($\alpha = 1.0$)
-     * **Column 2**: Pure Hyperlink PageRank ($\alpha = 0.0$)
-     * **Column 3**: Hybrid Intelligent Combined Ranking
-   * Real-time $\alpha$ slider $(0 \le \alpha \le 1)$ and damping factor slider $d \in [0.5, 0.99]$.
-   * Live Spearman $\rho$ correlation and rank displacement pills ($\uparrow +3$ or $\downarrow -2$).
+   * **Clean & Focused Stream (Default)**: Modern, spacious search cards with generous white space, bold titles, matched keyword tags, and rank shift indicators ($\uparrow +2$ or $\downarrow -3$).
+   * **Mathematical Score Inspector Sidebar**: Clicking any result card instantly visualizes its exact score decomposition bar (Relevance % vs Authority %) and equation:
+     $$\text{FinalScore} = \alpha \cdot R_{\text{norm}} + (1 - \alpha) \cdot PR_{\text{norm}}$$
+   * **Instant 3-Way Compare Mode**: Toggle from Focused to 3-Way Comparison at any time to inspect **Keyword (TF-IDF)** vs **PageRank** vs **Combined Hybrid** rankings side-by-side.
+   * **Smooth Sliders**: Real-time slider for **$\alpha$ (Relevance vs Authority)** and **$d$ (Damping factor)**.
+   * **Clean Status Ribbon**: Replaced bulky metric cards with a slim horizontal status bar showing Candidate count, Spearman $\rho_{\text{KW}}$, Spearman $\rho_{\text{PR}}$, and iteration count.
 2. **Graph Explorer**:
    * Interactive physics-based Vis.js directed graph visualization.
    * Node size proportional to PageRank score.

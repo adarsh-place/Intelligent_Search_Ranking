@@ -229,7 +229,7 @@ The system includes automated experimental suites to validate theoretical edge c
 ### Scope of Implementation
 * **Corpus**: Operates on a controlled, academic dataset of 18 rich computer science documents with diverse graph structures (hubs, authorities, dangling leaves, cross-domain links).
 * **Engines**: Built from first principles in Python (using NumPy for vectorized matrix operations) to ensure transparency for academic inspection.
-* **Frontend**: Interactive web visualizer supporting real-time graph exploration, dynamic edge editing, Markov surfer animation, and dual light/dark themes.
+* **Frontend**: Interactive web visualizer supporting real-time graph exploration, dynamic edge editing, Markov surfer animation, dual light/dark themes, and an uncluttered Search Studio with a Focused result stream, side-by-side comparative mode, and real-time score decomposition inspector.
 
 ### Challenges & Limitations
 1. **Corpus Scale**: Demonstrations operate on manageable local graphs ($N \approx 20 - 50$ nodes). Real-world web engines operate on sparse graphs of $N > 10^{10}$ nodes requiring distributed MapReduce or Pregel architectures.
