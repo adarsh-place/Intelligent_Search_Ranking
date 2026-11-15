@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadDampingExperiment();
   populateNodeSelects();
   runRecurrenceSimulation();
-  testInclusionExclusion();
 });
 
 // --------------------------------------------------------------------------
@@ -743,7 +742,6 @@ function renderRecurrenceResults(data) {
   const finalVector = data.final_vector || {};
   const stepHistory = data.step_history || [];
   const residuals = data.residuals || [];
-  const walkCounts = data.combinatorial_walk_counts || {};
   const induction = data.induction_proof || {};
 
   // Badge updates
@@ -780,13 +778,17 @@ function renderRecurrenceResults(data) {
     }).join('');
   }
 
-  // Combinatorial walk counts
-  const k1El = document.getElementById('path-k1-count');
-  const k2El = document.getElementById('path-k2-count');
-  const k3El = document.getElementById('path-k3-count');
-  if (k1El && walkCounts.walks_len_1 !== undefined) k1El.innerText = walkCounts.walks_len_1.toLocaleString();
-  if (k2El && walkCounts.walks_len_2 !== undefined) k2El.innerText = walkCounts.walks_len_2.toLocaleString();
-  if (k3El && walkCounts.walks_len_3 !== undefined) k3El.innerText = walkCounts.walks_len_3.toLocaleString();
+  // Top Authority Hubs
+  const topHubsContainer = document.getElementById('top-authority-hubs');
+  if (topHubsContainer && Object.keys(finalVector).length > 0) {
+    const sorted = Object.entries(finalVector).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    topHubsContainer.innerHTML = sorted.map(([pid, score], idx) => `
+      <div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+        <span class="font-bold text-slate-800 dark:text-slate-200">#${idx + 1} ${pid}</span>
+        <span class="text-indigo-600 dark:text-indigo-400 font-mono font-bold">${score.toFixed(5)}</span>
+      </div>
+    `).join('');
+  }
 
   // Mathematical induction badge
   const indBadge = document.getElementById('induction-badge');
@@ -852,35 +854,6 @@ function renderRecurrenceResults(data) {
   });
 }
 
-// Combinatorial Inclusion-Exclusion principle tester
-async function testInclusionExclusion() {
-  const t1Input = document.getElementById('ie-term1');
-  const t2Input = document.getElementById('ie-term2');
-  const t1 = (t1Input ? t1Input.value : 'graph') || 'graph';
-  const t2 = (t2Input ? t2Input.value : 'matrix') || 'matrix';
-
-  try {
-    const res = await fetch(`/api/inclusion_exclusion?term1=${encodeURIComponent(t1.trim())}&term2=${encodeURIComponent(t2.trim())}`);
-    const data = await res.json();
-    const container = document.getElementById('ie-results');
-    if (!container) return;
-
-    container.innerHTML = `
-      <div class="space-y-1">
-        <div class="flex justify-between"><span>|A ("${data.term_a}")|:</span> <span class="font-bold text-indigo-600 dark:text-indigo-400">${data.count_a} docs</span></div>
-        <div class="flex justify-between"><span>|B ("${data.term_b}")|:</span> <span class="font-bold text-purple-600 dark:text-purple-400">${data.count_b} docs</span></div>
-        <div class="flex justify-between"><span>|A &cap; B| (Intersection):</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">${data.count_intersection} docs</span></div>
-        <div class="flex justify-between border-t border-slate-200 dark:border-slate-800 pt-1">
-          <span>|A &cup; B| (Union):</span>
-          <span class="font-bold text-slate-900 dark:text-white">${data.count_union} docs ${data.inclusion_exclusion_verified ? '<span class="text-emerald-500">&#10003;</span>' : ''}</span>
-        </div>
-        <div class="text-[10px] text-slate-400 pt-0.5 italic">${data.formula}</div>
-      </div>
-    `;
-  } catch (err) {
-    console.error('Inclusion-Exclusion verification failed:', err);
-  }
-}
 
 // --------------------------------------------------------------------------
 // 4. EXPERIMENTS LAB

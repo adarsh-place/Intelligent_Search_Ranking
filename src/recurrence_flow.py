@@ -13,10 +13,10 @@ class RecurrenceFlowSimulator:
     Simulates the step-by-step linear recurrence relation governing conservative network flow across web graph edges:
         x^(t+1) = d * (x^(t) * P + dangling_mass/N) + (1 - d)/N
     
-    Demonstrates:
-    - Combinatorics & Recurrences: Linear recurrence relations, generating function matrix resolvent (I - d*M)^(-1), and path counting A^k.
-    - Graph Theory & Network Flows: Conservation of network flow across directed edges.
-    - Logic & Induction: Inductive flow conservation invariant sum(x^(t)) = 1.
+    Key Principles:
+    - Linear Recurrence Relations: Iterative updates converging to a unique stationary authority distribution.
+    - Network Flow Conservation: Invariance of total circulating authority sum(x^(t)) = 1 across iterations.
+    - Geometric Contraction: Tracking the residual difference ||x^(t+1) - x^(t)||_1 approaching zero.
     """
 
     def __init__(self, graph: WebGraph, damping_factor: float = 0.85, seed: Optional[int] = None, **kwargs):
@@ -98,14 +98,6 @@ class RecurrenceFlowSimulator:
             if diff < 1e-8:
                 break
 
-        # Combinatorics: Path counts via matrix powers A^1, A^2, A^3
-        A = self.graph.get_adjacency_matrix()
-        A_powers = {
-            "walks_len_1": int(np.sum(A)),
-            "walks_len_2": int(np.sum(np.linalg.matrix_power(A, 2))),
-            "walks_len_3": int(np.sum(np.linalg.matrix_power(A, 3)))
-        }
-
         final_vector = {all_nodes[i]: round(float(x[i]), 6) for i in range(n)}
 
         return {
@@ -114,8 +106,7 @@ class RecurrenceFlowSimulator:
             "final_vector": final_vector,
             "step_history": step_history,
             "residuals": residuals,
-            "all_steps_conserve_flow": all(flow_conservation_checks),
-            "combinatorial_walk_counts": A_powers
+            "all_steps_conserve_flow": all(flow_conservation_checks)
         }
 
 

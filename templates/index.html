@@ -125,11 +125,11 @@
         <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
           <span class="text-slate-400 font-medium mr-1">Suggestions:</span>
           <button onclick="setQuery('PageRank'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">PageRank</button>
-          <button onclick="setQuery('recurrence relation network flow'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Recurrence & Flow</button>
+          <button onclick="setQuery('recurrence relation network flow'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Recurrence &amp; Flow</button>
           <button onclick="setQuery('graph theory adjacency matrix'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Graph Theory</button>
-          <button onclick="setQuery('combinatorics path counting matrix powers'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Path Counting</button>
+          <button onclick="setQuery('vector space cosine similarity'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Vector Space</button>
           <button onclick="setQuery('spider trap cycle absorption'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Spider Trap</button>
-          <button onclick="setQuery('inclusion exclusion propositional logic'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Inclusion-Exclusion</button>
+          <button onclick="setQuery('link farm spam attack'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Link Spam</button>
         </div>
 
         <!-- Minimalist Tuning & View Controller Strip -->
@@ -384,10 +384,10 @@
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Linear Recurrence &amp; Conservative Network Flow Lab</h2>
-            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-mono font-semibold">Flow Convergence &amp; Induction</span>
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Linear Recurrence &amp; Network Flow Convergence Lab</h2>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-mono font-semibold">Iterative Fixed Point</span>
           </div>
-          <p class="text-xs text-slate-500">Simulates linear recurrence iteration x<sup>(t+1)</sup> = d(x<sup>(t)</sup>P) + (1-d)/N with mathematical induction flow invariance and path counting A<sup>k</sup>.</p>
+          <p class="text-xs text-slate-500">Simulates step-by-step linear recurrence updates x<sup>(t+1)</sup> = d(x<sup>(t)</sup>P) + (1-d)/N with conservative authority flow across graph edges.</p>
         </div>
         <div class="flex items-center gap-2">
           <select id="recurrence-steps-select" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-white">
@@ -404,15 +404,15 @@
       <!-- Main Visuals & Stats Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         
-        <!-- Left: Authority Flow Distribution & Induction Proof (2 Cols) -->
+        <!-- Left: Authority Flow Distribution & Invariant Verification (2 Cols) -->
         <div class="lg:col-span-2 space-y-4">
           
           <!-- Recurrence Vector Chart -->
           <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[400px]">
             <div class="flex items-center justify-between mb-3">
               <div>
-                <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Recurrence Authority Flow Vector x<sup>(t)</sup> vs Baseline</h3>
-                <p class="text-[11px] text-slate-400">Fixed point distribution in the matrix ring invariant subspace</p>
+                <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Stationary Authority Flow Vector x* vs Initial State x<sup>(0)</sup></h3>
+                <p class="text-[11px] text-slate-400">Fixed point distribution of conservative network flow across all graph nodes</p>
               </div>
               <span id="recurrence-residual-badge" class="text-xs px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-mono">Residual &Delta;: --</span>
             </div>
@@ -421,34 +421,34 @@
             </div>
           </div>
 
-          <!-- Mathematical Induction Invariant Verification Card -->
+          <!-- Flow Conservation & Contraction Invariant Card -->
           <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
             <div class="flex items-center justify-between mb-2">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Mathematical Induction — Flow Invariance Proof</h3>
+                <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Network Flow Conservation &amp; Stability Invariants</h3>
               </div>
               <span id="induction-badge" class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-800/60 px-2 py-0.5 rounded-lg">Verified &Sigma; x<sub>i</sub> = 1.0</span>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
               <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 font-mono space-y-1">
-                <div class="text-slate-500 font-semibold text-[11px]">Base Case (t = 0):</div>
-                <div class="text-slate-800 dark:text-slate-200 text-[11px]">&Sigma; x<sub>i</sub><sup>(0)</sup> = N &times; (1/N) = 1.0 <span class="text-emerald-500 font-bold">&#10003;</span></div>
+                <div class="text-slate-500 font-semibold text-[11px]">Conservative Flow Invariant:</div>
+                <div class="text-slate-800 dark:text-slate-200 text-[11px]">&Sigma; x<sub>i</sub><sup>(t)</sup> = 1.000000 for all iterations t &ge; 0 <span class="text-emerald-500 font-bold">&#10003;</span></div>
               </div>
               <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 font-mono space-y-1">
-                <div class="text-slate-500 font-semibold text-[11px]">Inductive Step (t &rarr; t + 1):</div>
-                <div class="text-slate-800 dark:text-slate-200 text-[11px]">&Sigma; x<sub>i</sub><sup>(t+1)</sup> = d(1.0) + (1-d) = 1.0 <span class="text-emerald-500 font-bold">&#10003;</span></div>
+                <div class="text-slate-500 font-semibold text-[11px]">Geometric Contraction:</div>
+                <div class="text-slate-800 dark:text-slate-200 text-[11px]">Residual ||x<sup>(t+1)</sup> - x<sup>(t)</sup>||<sub>1</sub> contracts at rate &OElig;(d<sup>t</sup>) <span class="text-emerald-500 font-bold">&#10003;</span></div>
               </div>
             </div>
           </div>
 
         </div>
 
-        <!-- Right: Iteration History, Combinatorial Paths & Inclusion-Exclusion (1 Col) -->
+        <!-- Right: Iteration History & Leading Authority Hubs (1 Col) -->
         <div class="space-y-4">
           
           <!-- Recurrence Residual Contraction Log -->
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[260px] space-y-2">
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[280px] space-y-2">
             <div class="flex items-center justify-between">
               <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Recurrence Trajectory Log</h3>
               <span class="text-[10px] text-slate-400 font-mono">||x<sup>(t+1)</sup> - x<sup>(t)</sup>||<sub>1</sub></span>
@@ -462,42 +462,15 @@
             </div>
           </div>
 
-          <!-- Combinatorial Path Counting (Matrix Powers A^k) -->
+          <!-- Top Authority Nodes Card -->
           <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2">
             <div class="flex items-center justify-between">
-              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Path Counting A<sup>k</sup></h3>
-              <span class="text-[10px] px-2 py-0.5 rounded bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-mono">Combinatorics</span>
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Top Authority Hubs</h3>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-mono">Ranked</span>
             </div>
-            <p class="text-[11px] text-slate-500">Number of directed walks of length k between all node pairs via matrix powers:</p>
-            <div class="grid grid-cols-3 gap-2 font-mono text-center pt-1">
-              <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-                <div class="text-[10px] text-slate-400">&Sigma; A<sup>1</sup> (k=1)</div>
-                <div id="path-k1-count" class="text-xs font-bold text-indigo-600 dark:text-indigo-400">--</div>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-                <div class="text-[10px] text-slate-400">&Sigma; A<sup>2</sup> (k=2)</div>
-                <div id="path-k2-count" class="text-xs font-bold text-purple-600 dark:text-purple-400">--</div>
-              </div>
-              <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-                <div class="text-[10px] text-slate-400">&Sigma; A<sup>3</sup> (k=3)</div>
-                <div id="path-k3-count" class="text-xs font-bold text-pink-600 dark:text-pink-400">--</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Inclusion-Exclusion Interactive Tester -->
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2">
-            <div class="flex items-center justify-between">
-              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Inclusion-Exclusion Principle</h3>
-              <span class="text-[10px] font-mono text-slate-400">|A &cup; B| = |A| + |B| - |A &cap; B|</span>
-            </div>
-            <div class="flex gap-2">
-              <input id="ie-term1" type="text" value="graph" class="w-1/2 p-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs font-mono" placeholder="Term 1" />
-              <input id="ie-term2" type="text" value="matrix" class="w-1/2 p-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs font-mono" placeholder="Term 2" />
-              <button onclick="testInclusionExclusion()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-medium">Verify</button>
-            </div>
-            <div id="ie-results" class="text-[11px] font-mono text-slate-600 dark:text-slate-300 p-2 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-              Formula: |A &cup; B| = |A| + |B| - |A &cap; B| (Click Verify)
+            <p class="text-[11px] text-slate-500">Highest authority nodes computed by linear recurrence convergence:</p>
+            <div id="top-authority-hubs" class="space-y-1.5 font-mono text-xs pt-1">
+              <div class="text-slate-400 text-[11px]">Run recurrence to populate rankings...</div>
             </div>
           </div>
 

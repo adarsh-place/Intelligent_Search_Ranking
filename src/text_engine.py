@@ -26,10 +26,9 @@ STOP_WORDS = {
 
 class TextRelevanceEngine:
     """
-    Implements Text Retrieval grounded in:
-    - Propositional Logic & Satisfiability: Boolean predicates over inverted index postings.
-    - Combinatorics: Inclusion-Exclusion principle for multi-term query document sets.
-    - Algebraic Structures: Vector Space Model in R^|V| with inner products (cosine metric).
+    Information Retrieval Engine:
+    Constructs an Inverted Index, computes sublinear TF-IDF document vectors,
+    and calculates Cosine Similarity in a high-dimensional vector space.
     """
 
     def __init__(self, graph: WebGraph):
@@ -42,34 +41,6 @@ class TextRelevanceEngine:
         self.vocabulary: Set[str] = set()
 
         self.build_index()
-
-    def evaluate_inclusion_exclusion(self, term1: str, term2: str) -> dict:
-        """
-        Combinatorial Inclusion-Exclusion Principle:
-        Calculates union and intersection sizes of matching document sets:
-            |A U B| = |A| + |B| - |A n B|
-        """
-        t1 = term1.lower()
-        t2 = term2.lower()
-        set_a = set(self.inverted_index.get(t1, {}).keys())
-        set_b = set(self.inverted_index.get(t2, {}).keys())
-
-        intersection = set_a.intersection(set_b)
-        union = set_a.union(set_b)
-
-        # Inclusion-Exclusion formula verification
-        ie_calculated_union = len(set_a) + len(set_b) - len(intersection)
-
-        return {
-            "term_a": t1,
-            "term_b": t2,
-            "count_a": len(set_a),
-            "count_b": len(set_b),
-            "count_intersection": len(intersection),
-            "count_union": len(union),
-            "inclusion_exclusion_verified": (len(union) == ie_calculated_union),
-            "formula": f"|A U B| = {len(set_a)} + {len(set_b)} - {len(intersection)} = {ie_calculated_union}"
-        }
 
     @staticmethod
     def tokenize(text: str) -> List[str]:

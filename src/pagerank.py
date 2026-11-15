@@ -14,10 +14,9 @@ class PageRankEngine:
     coupled linear recurrence relations governing conservative network flow across web graph edges.
     
     Mathematical Foundations Applied:
-    - Graph Theory & Network Flows: Network flow conservation (Flow In = Flow Out) and link centrality.
-    - Combinatorics & Recurrences: Solving systems of linear recurrence relations x^(t+1) = f(x^(t)).
-    - Algebraic Structures: Matrix ring operators M_N(R) and invariant 1D subspace (eigenvector with lambda=1).
-    - Logic & Induction: Proof by induction of total flow invariance: sum_i x_i^(t) = 1 for all t >= 0.
+    - Graph Theory & Network Flows: Conservation of authority flow across directed hyperlink edges.
+    - Linear Recurrence Relations: First-order coupled updates converging to a unique stationary distribution.
+    - Numerical Linear Algebra: Power iteration and fixed point matching the dominant left eigenvector (lambda = 1).
     """
 
     def __init__(self, graph: WebGraph, damping_factor: float = 0.85, tol: float = 1e-8, max_iter: int = 200):

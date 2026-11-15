@@ -61,8 +61,6 @@ def test_recurrence_flow_and_induction():
 
     assert rec_res["num_steps_executed"] > 0
     assert rec_res["all_steps_conserve_flow"] is True
-    assert "combinatorial_walk_counts" in rec_res
-    assert rec_res["combinatorial_walk_counts"]["walks_len_1"] > 0
 
     induction = engine.verify_flow_induction()
     assert induction["induction_holds"] is True
@@ -93,11 +91,6 @@ def test_text_relevance_engine():
     assert results["page_03"]["raw_score"] > 0.0
     for res in results.values():
         assert 0.0 <= res["raw_score"] <= 1.0
-
-    # Test Inclusion-Exclusion principle
-    ie_res = engine.evaluate_inclusion_exclusion("graph", "matrix")
-    assert ie_res["inclusion_exclusion_verified"] is True
-    assert ie_res["count_union"] == ie_res["count_a"] + ie_res["count_b"] - ie_res["count_intersection"]
 
 
 def test_hybrid_ranking():

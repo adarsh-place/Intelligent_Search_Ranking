@@ -86,21 +86,6 @@ def recurrence_flow():
     return jsonify(sim_result)
 
 
-@app.route("/api/inclusion_exclusion", methods=["GET", "POST"])
-def inclusion_exclusion():
-    """Evaluates Combinatorial Inclusion-Exclusion principle for two terms across postings."""
-    if request.method == "POST":
-        data = request.get_json() or {}
-        term1 = data.get("term1", "graph")
-        term2 = data.get("term2", "matrix")
-    else:
-        term1 = request.args.get("term1", "graph")
-        term2 = request.args.get("term2", "matrix")
-
-    result = text_engine.evaluate_inclusion_exclusion(term1, term2)
-    return jsonify(result)
-
-
 @app.route("/api/random_walk", methods=["POST"])
 def random_walk():
     """Step-by-step linear recurrence flow simulation (aliased for API backwards compatibility)."""
