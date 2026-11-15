@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Intelligent Search Ranking — MFCS Web Graph Studio</title>
+  <title>Intelligent Search Ranking — Web Graph Studio</title>
   <!-- Tailwind CSS with class dark mode -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -21,7 +21,7 @@
   </script>
   <!-- Vis.js Network for Graph Visualization -->
   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-  <!-- Chart.js for Markov Walk Convergence -->
+  <!-- Chart.js for Convergence & Flow Visualization -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Custom Styling -->
   <link rel="stylesheet" href="/static/css/style.css" />
@@ -54,7 +54,7 @@
         Graph
       </button>
       <button id="tab-surfer-btn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchTab('surfer')">
-        Random Surfer
+        Recurrence & Flow
       </button>
       <button id="tab-experiments-btn" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchTab('experiments')">
         Lab & Spam
@@ -107,8 +107,8 @@
             <input
               id="search-input"
               type="text"
-              value="PageRank Markov"
-              placeholder="Search concepts (e.g., PageRank, Markov chain, graph theory, spider trap)..."
+              value="PageRank Graph Flow"
+              placeholder="Search concepts (e.g., PageRank, network flows, recurrence relations, spider traps)..."
               class="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50/80 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm font-medium transition"
               onkeydown="if(event.key === 'Enter') triggerSearch()"
             />
@@ -125,11 +125,11 @@
         <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
           <span class="text-slate-400 font-medium mr-1">Suggestions:</span>
           <button onclick="setQuery('PageRank'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">PageRank</button>
-          <button onclick="setQuery('Markov chain stationary distribution'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Markov Chain</button>
+          <button onclick="setQuery('recurrence relation network flow'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Recurrence & Flow</button>
           <button onclick="setQuery('graph theory adjacency matrix'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Graph Theory</button>
-          <button onclick="setQuery('spider trap dead end'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Spider Trap</button>
-          <button onclick="setQuery('vector space tf-idf cosine'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Vector Space</button>
-          <button onclick="setQuery('link spam farm'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Link Spam</button>
+          <button onclick="setQuery('combinatorics path counting matrix powers'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Path Counting</button>
+          <button onclick="setQuery('spider trap cycle absorption'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Spider Trap</button>
+          <button onclick="setQuery('inclusion exclusion propositional logic'); triggerSearch()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition">Inclusion-Exclusion</button>
         </div>
 
         <!-- Minimalist Tuning & View Controller Strip -->
@@ -326,9 +326,9 @@
             <div class="flex flex-wrap items-center gap-3">
               <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#6366F1]"></span> Graph Theory</span>
               <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#8B5CF6]"></span> PageRank</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EC4899]"></span> Probability</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span> IR</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span> Architecture</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EC4899]"></span> Combinatorics</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span> IR &amp; Logic</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span> Algebraic Structures</span>
               <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span> Link Spam</span>
               <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span> Spider Trap</span>
             </div>
@@ -376,54 +376,133 @@
     </section>
 
     <!-- ========================================== -->
-    <!-- TAB 3: MARKOV RANDOM SURFER LAB           -->
+    <!-- TAB 3: RECURRENCE RELATIONS & FLOW LAB     -->
     <!-- ========================================== -->
     <section id="view-surfer" class="tab-view hidden space-y-5">
       
       <!-- Controls -->
       <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
-          <h2 class="text-sm font-bold text-slate-900 dark:text-white">Monte Carlo Random Surfer Simulation</h2>
-          <p class="text-xs text-slate-500">Simulates user browsing hops to show empirical visit frequencies converging to theoretical PageRank.</p>
+          <div class="flex items-center gap-2">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Linear Recurrence &amp; Conservative Network Flow Lab</h2>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-mono font-semibold">Flow Convergence &amp; Induction</span>
+          </div>
+          <p class="text-xs text-slate-500">Simulates linear recurrence iteration x<sup>(t+1)</sup> = d(x<sup>(t)</sup>P) + (1-d)/N with mathematical induction flow invariance and path counting A<sup>k</sup>.</p>
         </div>
         <div class="flex items-center gap-2">
-          <select id="surfer-steps-select" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-white">
-            <option value="500">500 Steps</option>
-            <option value="1500" selected>1,500 Steps</option>
-            <option value="5000">5,000 Steps</option>
+          <select id="recurrence-steps-select" class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-white">
+            <option value="10">10 Iterations</option>
+            <option value="25" selected>25 Iterations (Convergence)</option>
+            <option value="40">40 Iterations</option>
           </select>
-          <button onclick="runRandomWalkSimulation()" class="px-4 py-1.5 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-semibold text-xs transition">
-            Run Simulation
+          <button onclick="runRecurrenceSimulation()" class="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition shadow-sm">
+            Run Recurrence Flow
           </button>
         </div>
       </div>
 
-      <!-- Chart and Trajectory -->
+      <!-- Main Visuals & Stats Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[480px]">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Empirical Frequency vs Theoretical PageRank</h3>
-            <span id="surfer-l1-badge" class="text-xs px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-mono">L1 Error: --</span>
-          </div>
-          <div class="flex-1 relative">
-            <canvas id="surferComparisonChart"></canvas>
-          </div>
-        </div>
-
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[480px] space-y-3">
-          <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Walk Trajectory Log</h3>
-          <div class="p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-mono space-y-1">
-            <div class="flex justify-between text-slate-500"><span>Start:</span> <span id="walk-start-node" class="text-pink-600 dark:text-pink-400 font-bold">--</span></div>
-            <div class="flex justify-between text-slate-500"><span>Steps:</span> <span id="walk-total-steps" class="text-slate-900 dark:text-white">--</span></div>
-            <div class="flex justify-between text-slate-500"><span>End:</span> <span id="walk-end-node" class="text-pink-600 dark:text-pink-400 font-bold">--</span></div>
-          </div>
-          <div class="flex-1 flex flex-col overflow-hidden">
-            <div class="text-[11px] text-slate-400 mb-1">Hop Sequence:</div>
-            <div id="walk-trajectory-list" class="flex-1 p-2.5 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-[11px] overflow-y-auto space-y-1 scrollbar-thin">
-              <span class="text-slate-400">Click Run Simulation to view path...</span>
+        
+        <!-- Left: Authority Flow Distribution & Induction Proof (2 Cols) -->
+        <div class="lg:col-span-2 space-y-4">
+          
+          <!-- Recurrence Vector Chart -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[400px]">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Recurrence Authority Flow Vector x<sup>(t)</sup> vs Baseline</h3>
+                <p class="text-[11px] text-slate-400">Fixed point distribution in the matrix ring invariant subspace</p>
+              </div>
+              <span id="recurrence-residual-badge" class="text-xs px-2.5 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-mono">Residual &Delta;: --</span>
+            </div>
+            <div class="flex-1 relative">
+              <canvas id="surferComparisonChart"></canvas>
             </div>
           </div>
+
+          <!-- Mathematical Induction Invariant Verification Card -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Mathematical Induction — Flow Invariance Proof</h3>
+              </div>
+              <span id="induction-badge" class="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-800/60 px-2 py-0.5 rounded-lg">Verified &Sigma; x<sub>i</sub> = 1.0</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 font-mono space-y-1">
+                <div class="text-slate-500 font-semibold text-[11px]">Base Case (t = 0):</div>
+                <div class="text-slate-800 dark:text-slate-200 text-[11px]">&Sigma; x<sub>i</sub><sup>(0)</sup> = N &times; (1/N) = 1.0 <span class="text-emerald-500 font-bold">&#10003;</span></div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 font-mono space-y-1">
+                <div class="text-slate-500 font-semibold text-[11px]">Inductive Step (t &rarr; t + 1):</div>
+                <div class="text-slate-800 dark:text-slate-200 text-[11px]">&Sigma; x<sub>i</sub><sup>(t+1)</sup> = d(1.0) + (1-d) = 1.0 <span class="text-emerald-500 font-bold">&#10003;</span></div>
+              </div>
+            </div>
+          </div>
+
         </div>
+
+        <!-- Right: Iteration History, Combinatorial Paths & Inclusion-Exclusion (1 Col) -->
+        <div class="space-y-4">
+          
+          <!-- Recurrence Residual Contraction Log -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col h-[260px] space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Recurrence Trajectory Log</h3>
+              <span class="text-[10px] text-slate-400 font-mono">||x<sup>(t+1)</sup> - x<sup>(t)</sup>||<sub>1</sub></span>
+            </div>
+            <div class="p-2 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-mono space-y-0.5">
+              <div class="flex justify-between text-slate-500"><span>Steps Executed:</span> <span id="walk-total-steps" class="text-indigo-600 dark:text-indigo-400 font-bold">--</span></div>
+              <div class="flex justify-between text-slate-500"><span>Top Authority Node:</span> <span id="walk-end-node" class="text-slate-900 dark:text-white font-bold">--</span></div>
+            </div>
+            <div id="walk-trajectory-list" class="flex-1 p-2 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-[11px] overflow-y-auto space-y-1 scrollbar-thin">
+              <span class="text-slate-400">Click Run Recurrence Flow to compute...</span>
+            </div>
+          </div>
+
+          <!-- Combinatorial Path Counting (Matrix Powers A^k) -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Path Counting A<sup>k</sup></h3>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-mono">Combinatorics</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Number of directed walks of length k between all node pairs via matrix powers:</p>
+            <div class="grid grid-cols-3 gap-2 font-mono text-center pt-1">
+              <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                <div class="text-[10px] text-slate-400">&Sigma; A<sup>1</sup> (k=1)</div>
+                <div id="path-k1-count" class="text-xs font-bold text-indigo-600 dark:text-indigo-400">--</div>
+              </div>
+              <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                <div class="text-[10px] text-slate-400">&Sigma; A<sup>2</sup> (k=2)</div>
+                <div id="path-k2-count" class="text-xs font-bold text-purple-600 dark:text-purple-400">--</div>
+              </div>
+              <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                <div class="text-[10px] text-slate-400">&Sigma; A<sup>3</sup> (k=3)</div>
+                <div id="path-k3-count" class="text-xs font-bold text-pink-600 dark:text-pink-400">--</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inclusion-Exclusion Interactive Tester -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Inclusion-Exclusion Principle</h3>
+              <span class="text-[10px] font-mono text-slate-400">|A &cup; B| = |A| + |B| - |A &cap; B|</span>
+            </div>
+            <div class="flex gap-2">
+              <input id="ie-term1" type="text" value="graph" class="w-1/2 p-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs font-mono" placeholder="Term 1" />
+              <input id="ie-term2" type="text" value="matrix" class="w-1/2 p-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-xs font-mono" placeholder="Term 2" />
+              <button onclick="testInclusionExclusion()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-medium">Verify</button>
+            </div>
+            <div id="ie-results" class="text-[11px] font-mono text-slate-600 dark:text-slate-300 p-2 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+              Formula: |A &cup; B| = |A| + |B| - |A &cap; B| (Click Verify)
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </section>
@@ -454,7 +533,7 @@
             <h3 class="text-sm font-bold text-slate-900 dark:text-white">2. Spider Trap Simulation</h3>
             <span class="text-[10px] px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 font-mono">Cycle</span>
           </div>
-          <p class="text-xs text-slate-500">Tests how a closed 2-cycle loop absorbs random walk probability with standard damping (d = 0.85) vs without teleportation (d = 0.99).</p>
+          <p class="text-xs text-slate-500">Tests how a closed 2-cycle loop absorbs network flow in the linear recurrence with standard damping (d = 0.85) vs without uniform redistribution (d = 0.99).</p>
           <button onclick="runSpiderTrapExperiment()" class="w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition">
             Simulate Spider Trap
           </button>
@@ -483,7 +562,7 @@
 
   <!-- Clean Footer -->
   <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-3 px-6 text-center text-xs text-slate-500">
-    MFCS Project • Intelligent Search Ranking Using Web Graphs
+    Intelligent Search Ranking Using Web Graphs • Interactive Research Studio
   </footer>
 
   <script src="/static/js/main.js"></script>

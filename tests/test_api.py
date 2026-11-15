@@ -47,6 +47,31 @@ def test_api_search_route(client):
     assert len(data["combined_ranking"]) > 0
 
 
+def test_api_recurrence_flow_route(client):
+    payload = {
+        "num_steps": 20,
+        "damping": 0.85
+    }
+    response = client.post("/api/recurrence_flow", json=payload)
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert "step_history" in data
+    assert "residuals" in data
+    assert "all_steps_conserve_flow" in data
+    assert data["all_steps_conserve_flow"] is True
+    assert "combinatorial_walk_counts" in data
+    assert "induction_proof" in data
+    assert data["induction_proof"]["induction_holds"] is True
+
+
+def test_api_inclusion_exclusion_route(client):
+    response = client.get("/api/inclusion_exclusion?term1=graph&term2=matrix")
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert data["inclusion_exclusion_verified"] is True
+    assert data["count_union"] == data["count_a"] + data["count_b"] - data["count_intersection"]
+
+
 def test_api_random_walk_route(client):
     payload = {
         "num_steps": 500,

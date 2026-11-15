@@ -1,5 +1,4 @@
 """
 Intelligent Search Ranking Using Web Graphs
-Mathematical Foundations of Computer Science (MFCS) Project
+Core Graph, Information Retrieval, and Hybrid Ranking Engine
 """
-

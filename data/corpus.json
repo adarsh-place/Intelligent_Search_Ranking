@@ -15,58 +15,58 @@
   },
   {
     "id": "page_03",
-    "title": "The Anatomy of PageRank: Eigenvectors and Stationary Distributions",
-    "category": "PageRank",
-    "content": "PageRank estimates webpage authority by modeling navigation as a Markov chain. Each webpage distributes its structural importance evenly across its outgoing links. By applying the Perron-Frobenius theorem to the modified stochastic Google matrix, power iteration converges to the dominant eigenvector corresponding to eigenvalue lambda = 1. High PageRank indicates deep structural authority from incoming links.",
+    "title": "The Anatomy of PageRank: Flow Conservation and Invariant Eigenvectors",
+    "category": "Graph Theory",
+    "content": "PageRank estimates webpage authority by modeling web structure as a conservative network flow. Each webpage distributes its structural prestige evenly across its outgoing links. By framing ranking as a linear recurrence system over the link matrix, iteration converges to a unique invariant vector corresponding to eigenvalue lambda = 1. High PageRank indicates deep structural authority from incoming citations.",
     "outgoing_links": ["page_02", "page_04", "page_07", "page_09"]
   },
   {
     "id": "page_04",
-    "title": "Linear Algebra in Search: Matrix Transformations and Power Iteration",
-    "category": "Graph Theory",
-    "content": "Computing the PageRank vector for millions of nodes requires iterative numerical linear algebra. The power iteration method repeatedly multiplies a probability distribution vector by the transition probability matrix until the L1 norm difference falls below a tolerance threshold epsilon. Eigenvalue decomposition and spectral radius govern the rapid geometric rate of convergence.",
+    "title": "Algebraic Structures in Search: Matrix Rings and Power Iteration",
+    "category": "Algebraic Structures",
+    "content": "Computing authority vectors for millions of nodes utilizes algebraic structures and linear operators over vector spaces. The power iteration method repeatedly applies the link transformation matrix until the L1 norm difference falls below a tolerance threshold. Matrix ring properties and spectral bounds govern the rapid geometric rate of convergence.",
     "outgoing_links": ["page_03", "page_05"]
   },
   {
     "id": "page_05",
     "title": "Spectral Graph Theory: Laplacian Matrices and Graph Partitioning",
     "category": "Graph Theory",
-    "content": "Spectral graph theory analyzes the eigenvalues and eigenvectors of graph matrices such as the adjacency matrix and normalized graph Laplacian. These algebraic properties reveal graph expansion, bottleneck cuts, and cluster structures. In web search, spectral clustering helps partition web graphs into topical communities and identify dense hyperlink networks.",
+    "content": "Spectral graph theory analyzes the algebraic properties of graph matrices such as the adjacency matrix and normalized graph Laplacian. These algebraic invariants reveal graph expansion, bottleneck cuts, and cluster structures. In web search, spectral clustering helps partition web graphs into topical communities and identify dense hyperlink networks.",
     "outgoing_links": ["page_02", "page_04"]
   },
   {
     "id": "page_06",
     "title": "Structural Traps in Web Graphs: Spider Traps and Dead Ends",
     "category": "Graph Theory",
-    "content": "Web graphs often contain structural anomalies. Dead ends, also known as dangling nodes, are webpages with out-degree zero that cause probability mass to leak away during iterative updates. Spider traps are closed loops of pages that link only to each other, absorbing all random walk probability. Teleportation and damping factors solve both issues.",
+    "content": "Web graphs often contain structural anomalies. Dead ends, also known as dangling nodes, are webpages with out-degree zero that cause total rank mass to dissipate during iterative updates. Spider traps are closed directed cycles of pages that link only to each other, absorbing all circulating flow. Damping and uniform redistribution factors solve both structural challenges.",
     "outgoing_links": ["page_03", "page_07"]
   },
   {
     "id": "page_07",
-    "title": "Markov Chains and the Random Surfer Model",
-    "category": "Probability",
-    "content": "The random surfer model treats web browsing as a discrete-time Markov chain. At any step, the surfer clicks an outgoing link with probability d (the damping factor, typically 0.85) or gets bored and teleports to a completely random webpage with probability 1 - d. This guarantees an irreducible and aperiodic Markov chain with a unique stationary probability distribution.",
+    "title": "Network Flow Conservation and Authority Distribution in Web Graphs",
+    "category": "Graph Theory",
+    "content": "Web authority can be modeled as a network flow problem. Each vertex receives incoming flow from citing pages and distributes it equally among its outbound edges. To ensure continuous flow conservation across disconnected components, a uniform injection factor (1 - d) is distributed across all vertices, creating a strictly connected network with a balanced flow equilibrium.",
     "outgoing_links": ["page_03", "page_08", "page_09", "page_10"]
   },
   {
     "id": "page_08",
-    "title": "Glossary of Mathematical Foundations of Computer Science Terms",
+    "title": "Glossary of Discrete Mathematical Foundations and Graph Terms",
     "category": "Web Architecture",
-    "content": "A reference glossary covering fundamental MFCS definitions: directed acyclic graphs, stochastic matrices, stationary distributions, ergodic Markov chains, power iteration, inverse document frequency, and vector space similarity. Useful for students studying search engine mathematics and probability.",
+    "content": "A reference glossary covering fundamental definitions: directed acyclic graphs, adjacency matrices, flow conservation, linear recurrence relations, mathematical induction, inverse document frequency, and vector space similarity. Useful for researchers studying search engine mathematics and discrete structures.",
     "outgoing_links": []
   },
   {
     "id": "page_09",
-    "title": "Monte Carlo Random Walk Simulation and Empirical Convergence",
-    "category": "Probability",
-    "content": "Instead of solving matrix equations directly, random walks simulate actual user trajectories across hyperlinks. By tracking visit frequencies across thousands of random walk steps with random teleportation, the empirical visit proportion converges to the theoretical PageRank stationary distribution according to the Law of Large Numbers and the Ergodic Theorem.",
+    "title": "Combinatorics in Graphs: Path Counting, Matrix Powers, and Walks",
+    "category": "Combinatorics",
+    "content": "Combinatorial path counting provides deep insight into graph centrality. The k-th power of the adjacency matrix A^k precisely counts the number of directed walks of length k between any two vertices. Formulating ranking as an infinite series of attenuated path lengths yields the classic geometric matrix resolvent (I - d*M)^(-1), directly connecting graph walks with generating functions.",
     "outgoing_links": ["page_03", "page_07", "page_10"]
   },
   {
     "id": "page_10",
-    "title": "Damping Factor Sensitivity Analysis in Probabilistic Ranking",
-    "category": "Probability",
-    "content": "The choice of damping factor d balances structural hyperlink topology against uniform teleportation. When d is close to 1, PageRank strictly emphasizes graph structure but becomes vulnerable to spider traps and slow convergence. When d is low, rankings flatten toward uniform probability. A damping factor around 0.85 achieves optimal balance in practice.",
+    "title": "Recurrence Relations and Attenuation Parameter Analysis in Ranking",
+    "category": "Combinatorics",
+    "content": "PageRank can be formulated as a system of coupled linear recurrence relations: x(t+1) = d * M * x(t) + (1 - d)/N. The attenuation parameter d controls the rate of geometric decay across long path lengths. When d is high, long paths dominate rank calculation. When d is low, the recurrence contracts rapidly to uniform distribution, demonstrating standard contraction mapping properties.",
     "outgoing_links": ["page_03", "page_07"]
   },
   {
@@ -106,9 +106,9 @@
   },
   {
     "id": "page_16",
-    "title": "Personal Tech Blog: Quick Notes on PageRank and Markov Chains",
+    "title": "Personal Tech Blog: Quick Notes on Graph Algorithms and Search Queries",
     "category": "Web Architecture",
-    "content": "Just a casual personal blog post mentioning PageRank, Markov chains, random walks, and web graphs! PageRank is cool. PageRank is great. Keyword stuffing can happen here without any real external incoming links. Let us see how a search engine ranks this page when someone searches for PageRank.",
+    "content": "Just a casual personal blog post mentioning PageRank, graph algorithms, adjacency matrices, and web graphs! PageRank is cool. PageRank is great. Keyword stuffing can happen here without any real external incoming links. Let us see how a search engine ranks this page when someone searches for PageRank.",
     "outgoing_links": ["page_01"]
   },
   {
@@ -126,4 +126,3 @@
     "outgoing_links": ["page_01", "page_02", "page_06"]
   }
 ]
-

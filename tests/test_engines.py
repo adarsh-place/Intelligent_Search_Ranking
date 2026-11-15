@@ -1,5 +1,5 @@
 """
-Unit Tests for MFCS Intelligent Search Ranking Modules
+Unit Tests for Intelligent Search Ranking Algorithms
 """
 
 import os
@@ -7,7 +7,7 @@ import pytest
 import numpy as np
 from src.graph import WebGraph
 from src.pagerank import PageRankEngine
-from src.random_walk import RandomWalkSimulator
+from src.recurrence_flow import RecurrenceFlowSimulator, RandomWalkSimulator
 from src.text_engine import TextRelevanceEngine
 from src.ranking import RankingEngine
 from src.experiments import ExperimentSuite
@@ -53,6 +53,23 @@ def test_perron_frobenius_verification():
     assert res["matches_perron_frobenius"] is True
 
 
+def test_recurrence_flow_and_induction():
+    graph = WebGraph(CORPUS_PATH)
+    engine = PageRankEngine(graph)
+    sim = RecurrenceFlowSimulator(graph, damping_factor=0.85)
+    rec_res = sim.simulate_recurrence(num_steps=20)
+
+    assert rec_res["num_steps_executed"] > 0
+    assert rec_res["all_steps_conserve_flow"] is True
+    assert "combinatorial_walk_counts" in rec_res
+    assert rec_res["combinatorial_walk_counts"]["walks_len_1"] > 0
+
+    induction = engine.verify_flow_induction()
+    assert induction["induction_holds"] is True
+    assert induction["base_case_verified"] is True
+    assert induction["inductive_step_verified"] is True
+
+
 def test_random_walk_simulation():
     graph = WebGraph(CORPUS_PATH)
     engine = PageRankEngine(graph)
@@ -69,13 +86,18 @@ def test_random_walk_simulation():
 def test_text_relevance_engine():
     graph = WebGraph(CORPUS_PATH)
     engine = TextRelevanceEngine(graph)
-    results = engine.calculate_relevance("PageRank Markov chain")
+    results = engine.calculate_relevance("PageRank Graph Flow")
 
     assert len(results) == graph.num_nodes
     # page_03 (The Anatomy of PageRank) should have a high score
     assert results["page_03"]["raw_score"] > 0.0
     for res in results.values():
         assert 0.0 <= res["raw_score"] <= 1.0
+
+    # Test Inclusion-Exclusion principle
+    ie_res = engine.evaluate_inclusion_exclusion("graph", "matrix")
+    assert ie_res["inclusion_exclusion_verified"] is True
+    assert ie_res["count_union"] == ie_res["count_a"] + ie_res["count_b"] - ie_res["count_intersection"]
 
 
 def test_hybrid_ranking():
@@ -84,7 +106,7 @@ def test_hybrid_ranking():
     text_engine = TextRelevanceEngine(graph)
     ranker = RankingEngine(graph, text_engine, pr_engine)
 
-    query_res = ranker.rank_query("random walk probability", alpha=0.6)
+    query_res = ranker.rank_query("recurrence relations graph flow", alpha=0.6)
     assert query_res["num_candidates"] > 0
     assert len(query_res["combined_ranking"]) == query_res["num_candidates"]
 

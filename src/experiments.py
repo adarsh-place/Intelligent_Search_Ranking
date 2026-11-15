@@ -1,6 +1,6 @@
 """
-Experimental Laboratory Module: Link Spam, Spider Traps & Sensitivity Analysis
-MFCS Project - Intelligent Search Ranking
+Experimental Laboratory: Link Spam, Spider Traps & Sensitivity Analysis
+Intelligent Search Ranking
 """
 
 from typing import Dict, List, Tuple

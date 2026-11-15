@@ -1,12 +1,13 @@
 """
 Flask Web Application & REST API
-MFCS Project - Intelligent Search Ranking Interactive Visualizer
+Intelligent Search Ranking Interactive Visualizer
 """
 
 import os
 from flask import Flask, render_template, request, jsonify
 from .graph import WebGraph
 from .pagerank import PageRankEngine
+from .recurrence_flow import RecurrenceFlowSimulator
 from .random_walk import RandomWalkSimulator
 from .text_engine import TextRelevanceEngine
 from .ranking import RankingEngine
@@ -68,15 +69,46 @@ def search():
     return jsonify(results)
 
 
+@app.route("/api/recurrence_flow", methods=["POST"])
+def recurrence_flow():
+    """Simulates linear recurrence relation updates and conservative network flow convergence."""
+    data = request.get_json() or {}
+    num_steps = int(data.get("num_steps", 25))
+    damping = float(data.get("damping", 0.85))
+    start_distribution = data.get("start_distribution", None)
+
+    simulator = RecurrenceFlowSimulator(graph, damping_factor=damping)
+    sim_result = simulator.simulate_recurrence(
+        num_steps=num_steps,
+        start_distribution=start_distribution
+    )
+    sim_result["induction_proof"] = pr_engine.verify_flow_induction()
+    return jsonify(sim_result)
+
+
+@app.route("/api/inclusion_exclusion", methods=["GET", "POST"])
+def inclusion_exclusion():
+    """Evaluates Combinatorial Inclusion-Exclusion principle for two terms across postings."""
+    if request.method == "POST":
+        data = request.get_json() or {}
+        term1 = data.get("term1", "graph")
+        term2 = data.get("term2", "matrix")
+    else:
+        term1 = request.args.get("term1", "graph")
+        term2 = request.args.get("term2", "matrix")
+
+    result = text_engine.evaluate_inclusion_exclusion(term1, term2)
+    return jsonify(result)
+
+
 @app.route("/api/random_walk", methods=["POST"])
 def random_walk():
-    """Simulates Markov random surfer and returns empirical distribution and trajectory."""
+    """Step-by-step linear recurrence flow simulation (aliased for API backwards compatibility)."""
     data = request.get_json() or {}
-    num_steps = int(data.get("num_steps", 1500))
+    num_steps = int(data.get("num_steps", 30))
     damping = float(data.get("damping", 0.85))
     start_node = data.get("start_node", None)
 
-    # Calculate theoretical stationary distribution for comparison
     theoretical_pr, _ = pr_engine.compute(damping_factor=damping)
 
     simulator = RandomWalkSimulator(graph, damping_factor=damping)
@@ -220,7 +252,7 @@ def experiment_trap():
         "trap_mass_with_damping_085": round(float(trap_mass_d85), 5),
         "trap_mass_with_damping_099": round(float(trap_mass_d99), 5),
         "mass_difference_pct": round(((trap_mass_d99 - trap_mass_d85) / max(1e-6, trap_mass_d85)) * 100, 2),
-        "theoretical_insight": "Teleportation (1-d) prevents closed cycle subgraphs from absorbing all random walk probability."
+        "theoretical_insight": "Uniform redistribution (1-d) prevents closed cycle subgraphs from absorbing all authority flow in the linear recurrence."
     })
 
 

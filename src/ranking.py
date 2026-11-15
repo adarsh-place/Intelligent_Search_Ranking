@@ -1,6 +1,6 @@
 """
 Ranking Engine: Candidate Retrieval, Min-Max Normalization & Hybrid Score Fusion
-MFCS Project - Intelligent Search Ranking
+Intelligent Search Ranking
 """
 
 from typing import Dict, List, Optional, Tuple

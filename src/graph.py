@@ -1,6 +1,6 @@
 """
-Graph Theory Module: Directed Web Graph Representation and Topology Analysis
-MFCS Project - Intelligent Search Ranking
+Directed Web Graph Representation and Topology Analysis
+Intelligent Search Ranking
 """
 
 import json
@@ -85,6 +85,15 @@ class WebGraph:
                     v_idx = self.node_to_idx[v_id]
                     A[u_idx, v_idx] = 1.0
         return A
+
+    def get_path_matrix(self, k: int = 2) -> np.ndarray:
+        """
+        Calculates matrix power A^k.
+        Combinatorial Path Counting:
+        Entry (i, j) of A^k counts the exact number of directed walks of length k from vertex i to vertex j.
+        """
+        A = self.get_adjacency_matrix()
+        return np.linalg.matrix_power(A, k)
 
     def get_in_degrees(self) -> Dict[str, int]:
         """Calculates in-degree (number of incoming links) for every page."""
@@ -218,8 +227,9 @@ class WebGraph:
         # Category color map
         category_colors = {
             "Graph Theory": "#6366F1",         # Indigo
+            "Combinatorics": "#EC4899",        # Pink
+            "Algebraic Structures": "#14B8A6", # Teal
             "PageRank": "#8B5CF6",             # Violet
-            "Probability": "#EC4899",          # Pink
             "Information Retrieval": "#3B82F6", # Blue
             "Web Architecture": "#10B981",     # Emerald
             "Web Spam": "#EF4444",             # Red

@@ -1,6 +1,6 @@
 /**
  * Intelligent Search Ranking Frontend Controller
- * MFCS Project - Web Graphs, Markov Chains & IR
+ * Web Graphs, Recurrence Flow & Information Retrieval
  */
 
 // Application State
@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
   triggerSearch();
   loadDampingExperiment();
   populateNodeSelects();
+  runRecurrenceSimulation();
+  testInclusionExclusion();
 });
 
 // --------------------------------------------------------------------------
@@ -712,48 +714,105 @@ async function resetGraphToDefault() {
 }
 
 // --------------------------------------------------------------------------
-// 3. MARKOV RANDOM SURFER LAB
+// 3. RECURRENCE RELATIONS & NETWORK FLOW LAB
 // --------------------------------------------------------------------------
 
-async function runRandomWalkSimulation() {
-  const numSteps = parseInt(document.getElementById('surfer-steps-select').value);
-  const damping = parseFloat(document.getElementById('damping-slider').value);
+async function runRecurrenceSimulation() {
+  const stepsEl = document.getElementById('recurrence-steps-select') || document.getElementById('surfer-steps-select');
+  const numSteps = stepsEl ? parseInt(stepsEl.value) : 25;
+  const dampingEl = document.getElementById('damping-slider');
+  const damping = dampingEl ? parseFloat(dampingEl.value) : 0.85;
 
   try {
-    const res = await fetch('/api/random_walk', {
+    const res = await fetch('/api/recurrence_flow', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ num_steps: numSteps, damping: damping })
     });
     const simData = await res.json();
-    renderSurferResults(simData);
+    renderRecurrenceResults(simData);
   } catch (err) {
-    console.error('Random walk simulation failed:', err);
+    console.error('Recurrence flow simulation failed:', err);
   }
 }
 
-function renderSurferResults(data) {
-  document.getElementById('walk-start-node').innerText = data.start_node;
-  document.getElementById('walk-total-steps').innerText = data.num_steps.toLocaleString();
-  document.getElementById('walk-end-node').innerText = data.end_node;
-  document.getElementById('surfer-l1-badge').innerText = `L1 Error: ${data.final_l1_error.toFixed(4)}`;
+// Backward-compatible alias
+const runRandomWalkSimulation = runRecurrenceSimulation;
 
+function renderRecurrenceResults(data) {
+  const finalVector = data.final_vector || {};
+  const stepHistory = data.step_history || [];
+  const residuals = data.residuals || [];
+  const walkCounts = data.combinatorial_walk_counts || {};
+  const induction = data.induction_proof || {};
+
+  // Badge updates
+  const lastResidual = residuals.length > 0 ? residuals[residuals.length - 1] : 0.0;
+  const residualBadge = document.getElementById('recurrence-residual-badge');
+  if (residualBadge) {
+    residualBadge.innerText = `Residual Δ: ${lastResidual.toFixed(6)}`;
+  }
+  const surferBadge = document.getElementById('surfer-l1-badge');
+  if (surferBadge) {
+    surferBadge.innerText = `Residual Δ: ${lastResidual.toFixed(6)}`;
+  }
+
+  // Trajectory stats
+  const totalStepsEl = document.getElementById('walk-total-steps');
+  if (totalStepsEl) totalStepsEl.innerText = `${data.num_steps_executed} steps`;
+  
+  const topNode = stepHistory.length > 0 ? stepHistory[stepHistory.length - 1].top_node : '--';
+  const endNodeEl = document.getElementById('walk-end-node');
+  if (endNodeEl) endNodeEl.innerText = topNode;
+
+  // Step trajectory list
   const trajectoryList = document.getElementById('walk-trajectory-list');
-  const sample = data.trajectory_sample || [];
-  trajectoryList.innerHTML = sample.map((node, i) => {
-    return `<div class="flex items-center gap-1.5"><span class="text-slate-400 text-[10px]">#${i}</span> <span class="text-pink-600 dark:text-pink-400 font-bold">${node}</span></div>`;
-  }).join('');
+  if (trajectoryList) {
+    trajectoryList.innerHTML = stepHistory.slice(1).map(s => {
+      return `
+        <div class="flex items-center justify-between text-[11px] py-0.5 border-b border-slate-100 dark:border-slate-800/60">
+          <span class="text-slate-400">Step t=${s.step}:</span>
+          <span class="text-indigo-600 dark:text-indigo-400 font-bold">${s.top_node}</span>
+          <span class="text-slate-500 font-mono text-[10px]">Δ=${s.residual.toFixed(5)}</span>
+          <span class="text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">Flow=${s.total_flow.toFixed(3)}</span>
+        </div>
+      `;
+    }).join('');
+  }
 
-  const labels = Object.keys(data.empirical_distribution);
-  const empiricalProbs = labels.map(k => data.empirical_distribution[k]);
-  const theoreticalProbs = labels.map(k => data.theoretical_distribution ? data.theoretical_distribution[k] : 0);
+  // Combinatorial walk counts
+  const k1El = document.getElementById('path-k1-count');
+  const k2El = document.getElementById('path-k2-count');
+  const k3El = document.getElementById('path-k3-count');
+  if (k1El && walkCounts.walks_len_1 !== undefined) k1El.innerText = walkCounts.walks_len_1.toLocaleString();
+  if (k2El && walkCounts.walks_len_2 !== undefined) k2El.innerText = walkCounts.walks_len_2.toLocaleString();
+  if (k3El && walkCounts.walks_len_3 !== undefined) k3El.innerText = walkCounts.walks_len_3.toLocaleString();
+
+  // Mathematical induction badge
+  const indBadge = document.getElementById('induction-badge');
+  if (indBadge) {
+    if (induction.induction_holds && data.all_steps_conserve_flow) {
+      indBadge.className = "text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-800/60 px-2 py-0.5 rounded-lg";
+      indBadge.innerHTML = 'Verified &Sigma; x<sub>i</sub> = 1.0 &#10003;';
+    } else {
+      indBadge.className = "text-[11px] font-mono font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/70 border border-rose-200/60 dark:border-rose-800/60 px-2 py-0.5 rounded-lg";
+      indBadge.innerText = 'Flow Invariant Failed';
+    }
+  }
+
+  // Chart rendering
+  const labels = Object.keys(finalVector);
+  const finalProbs = labels.map(k => finalVector[k]);
+  const initialProbs = labels.map(() => 1.0 / labels.length);
 
   const isDark = (currentTheme === 'dark');
   const textColor = isDark ? '#94A3B8' : '#475569';
   const gridColor = isDark ? 'rgba(51, 65, 85, 0.3)' : 'rgba(226, 232, 240, 0.8)';
   const legendColor = isDark ? '#E2E8F0' : '#1E293B';
 
-  const ctx = document.getElementById('surferComparisonChart').getContext('2d');
+  const chartEl = document.getElementById('surferComparisonChart');
+  if (!chartEl) return;
+  const ctx = chartEl.getContext('2d');
   if (surferChartInstance) surferChartInstance.destroy();
 
   surferChartInstance = new Chart(ctx, {
@@ -762,16 +821,16 @@ function renderSurferResults(data) {
       labels: labels,
       datasets: [
         {
-          label: 'Empirical Visit Frequency π̂',
-          data: empiricalProbs,
-          backgroundColor: 'rgba(236, 72, 153, 0.8)',
-          borderRadius: 3
+          label: 'Stationary Recurrence Vector x*',
+          data: finalProbs,
+          backgroundColor: 'rgba(99, 102, 241, 0.85)',
+          borderRadius: 4
         },
         {
-          label: 'Theoretical PageRank π',
-          data: theoreticalProbs,
-          backgroundColor: 'rgba(99, 102, 241, 0.5)',
-          borderRadius: 3
+          label: 'Initial Uniform State x^(0)',
+          data: initialProbs,
+          backgroundColor: 'rgba(148, 163, 184, 0.35)',
+          borderRadius: 4
         }
       ]
     },
@@ -779,14 +838,48 @@ function renderSurferResults(data) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { labels: { color: legendColor, font: { size: 11 } } }
+        legend: { labels: { color: legendColor, font: { size: 11, family: 'Plus Jakarta Sans' } } }
       },
       scales: {
-        x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
-        y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
+        x: { ticks: { color: textColor, font: { size: 10, family: 'Fira Code' } }, grid: { color: gridColor } },
+        y: {
+          ticks: { color: textColor, font: { size: 10 } },
+          grid: { color: gridColor },
+          title: { display: true, text: 'Authority Flow Share', color: textColor, font: { size: 10 } }
+        }
       }
     }
   });
+}
+
+// Combinatorial Inclusion-Exclusion principle tester
+async function testInclusionExclusion() {
+  const t1Input = document.getElementById('ie-term1');
+  const t2Input = document.getElementById('ie-term2');
+  const t1 = (t1Input ? t1Input.value : 'graph') || 'graph';
+  const t2 = (t2Input ? t2Input.value : 'matrix') || 'matrix';
+
+  try {
+    const res = await fetch(`/api/inclusion_exclusion?term1=${encodeURIComponent(t1.trim())}&term2=${encodeURIComponent(t2.trim())}`);
+    const data = await res.json();
+    const container = document.getElementById('ie-results');
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="space-y-1">
+        <div class="flex justify-between"><span>|A ("${data.term_a}")|:</span> <span class="font-bold text-indigo-600 dark:text-indigo-400">${data.count_a} docs</span></div>
+        <div class="flex justify-between"><span>|B ("${data.term_b}")|:</span> <span class="font-bold text-purple-600 dark:text-purple-400">${data.count_b} docs</span></div>
+        <div class="flex justify-between"><span>|A &cap; B| (Intersection):</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">${data.count_intersection} docs</span></div>
+        <div class="flex justify-between border-t border-slate-200 dark:border-slate-800 pt-1">
+          <span>|A &cup; B| (Union):</span>
+          <span class="font-bold text-slate-900 dark:text-white">${data.count_union} docs ${data.inclusion_exclusion_verified ? '<span class="text-emerald-500">&#10003;</span>' : ''}</span>
+        </div>
+        <div class="text-[10px] text-slate-400 pt-0.5 italic">${data.formula}</div>
+      </div>
+    `;
+  } catch (err) {
+    console.error('Inclusion-Exclusion verification failed:', err);
+  }
 }
 
 // --------------------------------------------------------------------------
